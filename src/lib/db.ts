@@ -1,6 +1,4 @@
-// lib/db.ts
-
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "../../prisma/generated/client";
 
 const db = new PrismaClient();
 
