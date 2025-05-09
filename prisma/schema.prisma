@@ -82,7 +82,7 @@ model Event {
   description String?
   date        String   
   time        String   // Time in HH:MM format
-  type        String   @default("other") // hearing, mention, meeting, deadline, other
+  type        String   @default("mention") // hearing, mention, meeting, deadline, other
   color       String   @default("blue")  // blue, red, green, purple, orange
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -134,13 +134,14 @@ export default function DiaryPage() {
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [, setSelectedDate] = useState<Date | null>(null);
 
   const [newEvent, setNewEvent] = useState<Omit<EventType, "id"> & { id?: string }>({
     title: "",
     description: "",
     date: "",
     time: "",
-    type: "other",
+    type: "Mention",
     color: "blue",
   });
 
@@ -183,7 +184,7 @@ export default function DiaryPage() {
       description: "",
       date: format(date, "yyyy-MM-dd"),
       time: format(new Date().setHours(9, 0, 0, 0), "HH:mm"),
-      type: "other",
+      type: "Mention",
       color: "blue",
     });
     setIsDialogOpen(true);
@@ -237,7 +238,7 @@ export default function DiaryPage() {
         description: "",
         date: "",
         time: "",
-        type: "other",
+        type: "Mention",
         color: "blue",
       });
     } catch {

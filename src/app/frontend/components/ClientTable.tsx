@@ -34,8 +34,26 @@ const typeOptions = [
   "Others"
 ];
 
+// Define a type for case type codes
+type CaseTypeCode = 
+  | "MCCOMMSU" 
+  | "MCCGCR" 
+  | "MCCHSO" 
+  | "MCSUCCMISC" 
+  | "MCCCMISC" 
+  | "MCDC" 
+  | "MCEP" 
+  | "MCSO" 
+  | "MCCR" 
+  | "MCTR" 
+  | "MCSUCC" 
+  | "MCELC" 
+  | "MCCRMISC" 
+  | "MCINQ" 
+  | "MCELCMISC";
+
 // Mapping of case type codes to full names
-const caseTypeCodeMapping = {
+const caseTypeCodeMapping: Record<CaseTypeCode, string> = {
   "MCCOMMSU": "Magistrate Court Commercial Suits",
   "MCCGCR": "Magistrate Court County Government Criminal Matters",
   "MCCHSO": "Sexual Offence- Children",
@@ -52,6 +70,11 @@ const caseTypeCodeMapping = {
   "MCINQ": "Magistrate Court Inquest",
   "MCELCMISC": "Environment and Land Misc."
 };
+
+// Type guard function to check if a string is a valid case type code
+function isCaseTypeCode(code: string): code is CaseTypeCode {
+  return Object.keys(caseTypeCodeMapping).includes(code as CaseTypeCode);
+}
 
 type Client = {
   id: number;
@@ -80,8 +103,8 @@ const ClientTable = () => {
 
       // Convert any case type codes to full names
       const processedData = data.map((client: Client) => {
-        // If the type is a code, convert it to full name
-        if (caseTypeCodeMapping[client.type]) {
+        // Use the type guard to check if the client.type is a valid case type code
+        if (isCaseTypeCode(client.type)) {
           return {
             ...client,
             type: caseTypeCodeMapping[client.type]
