@@ -1,21 +1,18 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { Prisma } from '@prisma/client';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const folderId = searchParams.get('folderId') || 'root';
 
-    const query: { where: Prisma.DocumentWhereInput } = {
-      where: {}
-    };
+    // Set parentId condition based on folderId
+    const parentIdCondition = folderId === 'root' ? null : folderId;
 
-    query.where.parentId = folderId === 'root' ? null : folderId;
-
+    // Fetch files
     const files = await db.document.findMany({
       where: {
-        ...query.where,
+        parentId: parentIdCondition,
         type: 'file'
       },
       orderBy: {
@@ -23,9 +20,10 @@ export async function GET(request: Request) {
       }
     });
 
+    // Fetch folders
     const folders = await db.document.findMany({
       where: {
-        ...query.where,
+        parentId: parentIdCondition,
         type: 'folder'
       },
       orderBy: {
