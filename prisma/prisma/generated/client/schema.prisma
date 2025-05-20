@@ -9,6 +9,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String // Hashed password
+  image     String? // 👈 Optional image field (URL or base64 string)
+  googleId  String?  @unique // nullable and unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Client {
   id          String       @id @default(uuid())
   name        String
