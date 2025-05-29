@@ -2,11 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 // Helper to extract clientId from the URL
-function extractClientId(request: NextRequest): number | null {
+function extractClientId(request: NextRequest): string | null {
   const segments = request.nextUrl.pathname.split('/');
   const id = segments[segments.indexOf('clients') + 1];
-  const clientId = parseInt(id);
-  return isNaN(clientId) ? null : clientId;
+  return id || null;
 }
 
 // GET: Get case details for a specific client
@@ -18,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     const caseDetails = await db.caseDetails.findUnique({
-      where: { clientId: String(clientId) },
+      where: { clientId },
     });
 
     if (!caseDetails) {
@@ -43,12 +42,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     const caseDetails = await db.caseDetails.upsert({
-      where: { clientId: String(clientId) },
+      where: { clientId },
       update: body,
       create: {
         ...body,
-        clientId: String(clientId),
-        client: { connect: { id: clientId } },
+        clientId,
       },
     });
 
@@ -70,7 +68,7 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
 
     const existingDetails = await db.caseDetails.findUnique({
-      where: { clientId: String(clientId) },
+      where: { clientId },
     });
 
     if (!existingDetails) {
@@ -78,7 +76,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const updatedCaseDetails = await db.caseDetails.update({
-      where: { clientId: String(clientId) },
+      where: { clientId },
       data: body,
     });
 

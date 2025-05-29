@@ -5093,6 +5093,7 @@ export namespace Prisma {
 
   export type CaseDetailsMinAggregateOutputType = {
     id: number | null
+    clientId: string | null
     caseNumber: string | null
     trackingNumber: string | null
     caseSummary: string | null
@@ -5100,11 +5101,11 @@ export namespace Prisma {
     station: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    clientId: string | null
   }
 
   export type CaseDetailsMaxAggregateOutputType = {
     id: number | null
+    clientId: string | null
     caseNumber: string | null
     trackingNumber: string | null
     caseSummary: string | null
@@ -5112,11 +5113,11 @@ export namespace Prisma {
     station: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    clientId: string | null
   }
 
   export type CaseDetailsCountAggregateOutputType = {
     id: number
+    clientId: number
     caseNumber: number
     trackingNumber: number
     caseSummary: number
@@ -5124,7 +5125,6 @@ export namespace Prisma {
     station: number
     createdAt: number
     updatedAt: number
-    clientId: number
     _all: number
   }
 
@@ -5139,6 +5139,7 @@ export namespace Prisma {
 
   export type CaseDetailsMinAggregateInputType = {
     id?: true
+    clientId?: true
     caseNumber?: true
     trackingNumber?: true
     caseSummary?: true
@@ -5146,11 +5147,11 @@ export namespace Prisma {
     station?: true
     createdAt?: true
     updatedAt?: true
-    clientId?: true
   }
 
   export type CaseDetailsMaxAggregateInputType = {
     id?: true
+    clientId?: true
     caseNumber?: true
     trackingNumber?: true
     caseSummary?: true
@@ -5158,11 +5159,11 @@ export namespace Prisma {
     station?: true
     createdAt?: true
     updatedAt?: true
-    clientId?: true
   }
 
   export type CaseDetailsCountAggregateInputType = {
     id?: true
+    clientId?: true
     caseNumber?: true
     trackingNumber?: true
     caseSummary?: true
@@ -5170,7 +5171,6 @@ export namespace Prisma {
     station?: true
     createdAt?: true
     updatedAt?: true
-    clientId?: true
     _all?: true
   }
 
@@ -5262,6 +5262,7 @@ export namespace Prisma {
 
   export type CaseDetailsGroupByOutputType = {
     id: number
+    clientId: string
     caseNumber: string
     trackingNumber: string | null
     caseSummary: string | null
@@ -5269,7 +5270,6 @@ export namespace Prisma {
     station: string | null
     createdAt: Date
     updatedAt: Date
-    clientId: string
     _count: CaseDetailsCountAggregateOutputType | null
     _avg: CaseDetailsAvgAggregateOutputType | null
     _sum: CaseDetailsSumAggregateOutputType | null
@@ -5293,6 +5293,7 @@ export namespace Prisma {
 
   export type CaseDetailsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    clientId?: boolean
     caseNumber?: boolean
     trackingNumber?: boolean
     caseSummary?: boolean
@@ -5300,12 +5301,12 @@ export namespace Prisma {
     station?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    clientId?: boolean
     client?: boolean | ClientDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["caseDetails"]>
 
   export type CaseDetailsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    clientId?: boolean
     caseNumber?: boolean
     trackingNumber?: boolean
     caseSummary?: boolean
@@ -5313,12 +5314,12 @@ export namespace Prisma {
     station?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    clientId?: boolean
     client?: boolean | ClientDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["caseDetails"]>
 
   export type CaseDetailsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    clientId?: boolean
     caseNumber?: boolean
     trackingNumber?: boolean
     caseSummary?: boolean
@@ -5326,12 +5327,12 @@ export namespace Prisma {
     station?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    clientId?: boolean
     client?: boolean | ClientDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["caseDetails"]>
 
   export type CaseDetailsSelectScalar = {
     id?: boolean
+    clientId?: boolean
     caseNumber?: boolean
     trackingNumber?: boolean
     caseSummary?: boolean
@@ -5339,10 +5340,9 @@ export namespace Prisma {
     station?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    clientId?: boolean
   }
 
-  export type CaseDetailsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "caseNumber" | "trackingNumber" | "caseSummary" | "filingDate" | "station" | "createdAt" | "updatedAt" | "clientId", ExtArgs["result"]["caseDetails"]>
+  export type CaseDetailsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientId" | "caseNumber" | "trackingNumber" | "caseSummary" | "filingDate" | "station" | "createdAt" | "updatedAt", ExtArgs["result"]["caseDetails"]>
   export type CaseDetailsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     client?: boolean | ClientDefaultArgs<ExtArgs>
   }
@@ -5360,6 +5360,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
+      clientId: string
       caseNumber: string
       trackingNumber: string | null
       caseSummary: string | null
@@ -5367,7 +5368,6 @@ export namespace Prisma {
       station: string | null
       createdAt: Date
       updatedAt: Date
-      clientId: string
     }, ExtArgs["result"]["caseDetails"]>
     composites: {}
   }
@@ -5793,6 +5793,7 @@ export namespace Prisma {
    */
   interface CaseDetailsFieldRefs {
     readonly id: FieldRef<"CaseDetails", 'Int'>
+    readonly clientId: FieldRef<"CaseDetails", 'String'>
     readonly caseNumber: FieldRef<"CaseDetails", 'String'>
     readonly trackingNumber: FieldRef<"CaseDetails", 'String'>
     readonly caseSummary: FieldRef<"CaseDetails", 'String'>
@@ -5800,7 +5801,6 @@ export namespace Prisma {
     readonly station: FieldRef<"CaseDetails", 'String'>
     readonly createdAt: FieldRef<"CaseDetails", 'DateTime'>
     readonly updatedAt: FieldRef<"CaseDetails", 'DateTime'>
-    readonly clientId: FieldRef<"CaseDetails", 'String'>
   }
     
 
@@ -11717,14 +11717,14 @@ export namespace Prisma {
 
   export const CaseDetailsScalarFieldEnum: {
     id: 'id',
+    clientId: 'clientId',
     caseNumber: 'caseNumber',
     trackingNumber: 'trackingNumber',
     caseSummary: 'caseSummary',
     filingDate: 'filingDate',
     station: 'station',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    clientId: 'clientId'
+    updatedAt: 'updatedAt'
   };
 
   export type CaseDetailsScalarFieldEnum = (typeof CaseDetailsScalarFieldEnum)[keyof typeof CaseDetailsScalarFieldEnum]
@@ -12110,6 +12110,7 @@ export namespace Prisma {
     OR?: CaseDetailsWhereInput[]
     NOT?: CaseDetailsWhereInput | CaseDetailsWhereInput[]
     id?: IntFilter<"CaseDetails"> | number
+    clientId?: StringFilter<"CaseDetails"> | string
     caseNumber?: StringFilter<"CaseDetails"> | string
     trackingNumber?: StringNullableFilter<"CaseDetails"> | string | null
     caseSummary?: StringNullableFilter<"CaseDetails"> | string | null
@@ -12117,12 +12118,12 @@ export namespace Prisma {
     station?: StringNullableFilter<"CaseDetails"> | string | null
     createdAt?: DateTimeFilter<"CaseDetails"> | Date | string
     updatedAt?: DateTimeFilter<"CaseDetails"> | Date | string
-    clientId?: StringFilter<"CaseDetails"> | string
     client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
   }
 
   export type CaseDetailsOrderByWithRelationInput = {
     id?: SortOrder
+    clientId?: SortOrder
     caseNumber?: SortOrder
     trackingNumber?: SortOrderInput | SortOrder
     caseSummary?: SortOrderInput | SortOrder
@@ -12130,7 +12131,6 @@ export namespace Prisma {
     station?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    clientId?: SortOrder
     client?: ClientOrderByWithRelationInput
   }
 
@@ -12152,6 +12152,7 @@ export namespace Prisma {
 
   export type CaseDetailsOrderByWithAggregationInput = {
     id?: SortOrder
+    clientId?: SortOrder
     caseNumber?: SortOrder
     trackingNumber?: SortOrderInput | SortOrder
     caseSummary?: SortOrderInput | SortOrder
@@ -12159,7 +12160,6 @@ export namespace Prisma {
     station?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    clientId?: SortOrder
     _count?: CaseDetailsCountOrderByAggregateInput
     _avg?: CaseDetailsAvgOrderByAggregateInput
     _max?: CaseDetailsMaxOrderByAggregateInput
@@ -12172,6 +12172,7 @@ export namespace Prisma {
     OR?: CaseDetailsScalarWhereWithAggregatesInput[]
     NOT?: CaseDetailsScalarWhereWithAggregatesInput | CaseDetailsScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"CaseDetails"> | number
+    clientId?: StringWithAggregatesFilter<"CaseDetails"> | string
     caseNumber?: StringWithAggregatesFilter<"CaseDetails"> | string
     trackingNumber?: StringNullableWithAggregatesFilter<"CaseDetails"> | string | null
     caseSummary?: StringNullableWithAggregatesFilter<"CaseDetails"> | string | null
@@ -12179,7 +12180,6 @@ export namespace Prisma {
     station?: StringNullableWithAggregatesFilter<"CaseDetails"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"CaseDetails"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CaseDetails"> | Date | string
-    clientId?: StringWithAggregatesFilter<"CaseDetails"> | string
   }
 
   export type DocumentWhereInput = {
@@ -12767,6 +12767,7 @@ export namespace Prisma {
 
   export type CaseDetailsUncheckedCreateInput = {
     id?: number
+    clientId: string
     caseNumber: string
     trackingNumber?: string | null
     caseSummary?: string | null
@@ -12774,7 +12775,6 @@ export namespace Prisma {
     station?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    clientId: string
   }
 
   export type CaseDetailsUpdateInput = {
@@ -12790,6 +12790,7 @@ export namespace Prisma {
 
   export type CaseDetailsUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    clientId?: StringFieldUpdateOperationsInput | string
     caseNumber?: StringFieldUpdateOperationsInput | string
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
     caseSummary?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12797,11 +12798,11 @@ export namespace Prisma {
     station?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    clientId?: StringFieldUpdateOperationsInput | string
   }
 
   export type CaseDetailsCreateManyInput = {
     id?: number
+    clientId: string
     caseNumber: string
     trackingNumber?: string | null
     caseSummary?: string | null
@@ -12809,7 +12810,6 @@ export namespace Prisma {
     station?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    clientId: string
   }
 
   export type CaseDetailsUpdateManyMutationInput = {
@@ -12824,6 +12824,7 @@ export namespace Prisma {
 
   export type CaseDetailsUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    clientId?: StringFieldUpdateOperationsInput | string
     caseNumber?: StringFieldUpdateOperationsInput | string
     trackingNumber?: NullableStringFieldUpdateOperationsInput | string | null
     caseSummary?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12831,7 +12832,6 @@ export namespace Prisma {
     station?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    clientId?: StringFieldUpdateOperationsInput | string
   }
 
   export type DocumentCreateInput = {
@@ -13476,6 +13476,7 @@ export namespace Prisma {
 
   export type CaseDetailsCountOrderByAggregateInput = {
     id?: SortOrder
+    clientId?: SortOrder
     caseNumber?: SortOrder
     trackingNumber?: SortOrder
     caseSummary?: SortOrder
@@ -13483,7 +13484,6 @@ export namespace Prisma {
     station?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    clientId?: SortOrder
   }
 
   export type CaseDetailsAvgOrderByAggregateInput = {
@@ -13492,6 +13492,7 @@ export namespace Prisma {
 
   export type CaseDetailsMaxOrderByAggregateInput = {
     id?: SortOrder
+    clientId?: SortOrder
     caseNumber?: SortOrder
     trackingNumber?: SortOrder
     caseSummary?: SortOrder
@@ -13499,11 +13500,11 @@ export namespace Prisma {
     station?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    clientId?: SortOrder
   }
 
   export type CaseDetailsMinOrderByAggregateInput = {
     id?: SortOrder
+    clientId?: SortOrder
     caseNumber?: SortOrder
     trackingNumber?: SortOrder
     caseSummary?: SortOrder
@@ -13511,7 +13512,6 @@ export namespace Prisma {
     station?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    clientId?: SortOrder
   }
 
   export type CaseDetailsSumOrderByAggregateInput = {
