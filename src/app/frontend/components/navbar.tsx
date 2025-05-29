@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/app/context/AuthContext";
 import { 
-  FiSearch, 
   FiCalendar, 
   FiFolder, 
   FiDollarSign, 
@@ -41,8 +41,22 @@ const Navbar = () => {
 
   return (
     <nav className="flex justify-between items-center py-3 px-6 bg-white shadow">
+      {/* Logo */}
+      <div className="flex items-center">
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={250}
+            height={80}
+            className="h-20 w-auto"
+            priority
+          />
+        </Link>
+      </div>
+
       {/* Centered Links */}
-      <div className="hidden md:flex space-x-5 mx-auto">
+      <div className="hidden md:flex space-x-5 absolute left-1/2 transform -translate-x-1/2">
         <Link href="/" className="flex items-center gap-1 hover:text-blue-600">
           <FiBarChart2 />
           <span>Home</span>
@@ -66,14 +80,8 @@ const Navbar = () => {
       </div>
 
       {/* Right side elements */}
-      <div className="flex items-center gap-3 ml-auto">
+      <div className="flex items-center gap-3">
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="pl-8 pr-3 py-1 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-500"
-          />
-          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
     
         

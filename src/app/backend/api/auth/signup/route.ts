@@ -1,7 +1,3 @@
-import { cookies } from "next/headers";
-import { db } from '@/lib/db';
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 interface SignupRequestBody {
@@ -23,52 +19,20 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ message: "Password must be at least 8 characters" }, { status: 400 });
     }
 
-    // Check if user already exists
-    const existingUser = await db.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
-
-    if (existingUser) {
-      return NextResponse.json({ message: "Email already in use" }, { status: 409 });
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ message: "Invalid email format" }, { status: 400 });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user in database
-    const user = await db.user.create({
-      data: {
-        name,
-        email: email.toLowerCase(),
-        password: hashedPassword,
-      },
-    });
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "7d" }
-    );
-
-    // Set auth token cookie
-    (await
-          // Set auth token cookie
-          cookies()).set("authToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: "/",
-    });
-
-    // Return created user (without password)
+    // Instead of creating user directly, redirect to email verification flow
+    // The frontend should call /api/auth/send-verification after this
     return NextResponse.json({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
+      message: "Please verify your email to complete signup",
+      nextStep: "email-verification",
+      email: email.toLowerCase(),
     });
+
   } catch (error) {
     console.error("Signup error:", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });

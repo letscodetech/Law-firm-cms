@@ -15,8 +15,11 @@ model User {
   password  String   // Hashed password
   image    String?  // 👈 Optional image field (URL or base64 string)
   googleId  String?  @unique // nullable and unique
+  emailVerified Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  resetTokens AccountResetToken[]
+
 }
 
 model Client {
@@ -97,4 +100,25 @@ model Event {
   color       String   @default("blue")  // blue, red, green, purple, orange
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+model VerificationCode {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  userData  String?  // JSON string with name, password, etc.
+  
+  @@index([email])
+  @@index([code])
+}
+model AccountResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("account_reset_tokens")
 }
