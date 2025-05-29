@@ -4,8 +4,8 @@ import { db } from '@/lib/db';
 export async function PATCH(request: NextRequest) {
   try {
     const url = request.nextUrl;
-    const id = url.pathname.split('/').pop(); // Extract 'id' from URL
-    const clientId = id || ''; // Ensure clientId is a string
+    const id = url.pathname.split('/').pop();
+    const clientId = id || '';
 
     if (!clientId) {
       return NextResponse.json({ error: 'Invalid client ID' }, { status: 400 });
@@ -13,17 +13,16 @@ export async function PATCH(request: NextRequest) {
 
     const updateData = await request.json();
 
-    const updatedClient = await db.client.update({
-      where: { id: clientId }, // clientId is now a string
-      data: updateData,
+    const updatedCaseDetails = await db.caseDetails.upsert({
+      where: { clientId },
+      update: updateData,
+      create: { ...updateData, clientId },
     });
 
-    return NextResponse.json(updatedClient);
+    return NextResponse.json(updatedCaseDetails);
   } catch (error) {
-    console.error('Error updating client:', error);
-    return NextResponse.json(
-      { error: 'Failed to update client' },
-      { status: 500 }
-    );
+    console.error('Error updating case details:', error);
+    return NextResponse.json({ error: 'Failed to update case details' }, { status: 500 });
   }
 }
+
