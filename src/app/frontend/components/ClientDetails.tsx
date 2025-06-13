@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Calendar } from "lucide-react";
 import { toast } from "sonner";
-
 // Define types
 type CaseDetails = {
   caseNumber: string;
@@ -13,13 +12,17 @@ type CaseDetails = {
 
 type ClientCaseDetailsProps = {
   clientId: number;
+  matterId: number;  // Added matterId prop
   clientName: string;
+  matterTitle: string;  // Added matterTitle prop
   onClose: () => void;
 };
 
 const ClientCaseDetails = ({
   clientId,
+  matterId,  // Added matterId parameter
   clientName,
+  matterTitle,  // Added matterTitle parameter
   onClose,
 }: ClientCaseDetailsProps) => {
   const [caseDetails, setCaseDetails] = useState<CaseDetails>({
@@ -37,9 +40,9 @@ const ClientCaseDetails = ({
     const fetchCaseDetails = async () => {
       try {
         setLoading(true);
-        // Try to fetch existing case details
+        // Fetch case details for specific matter
         const res = await fetch(
-          `/backend/api/clients/${clientId}/case-details`
+          `/backend/api/clients/${clientId}/matters/${matterId}/case-details`
         );
 
         if (res.ok) {
@@ -56,7 +59,7 @@ const ClientCaseDetails = ({
     };
 
     fetchCaseDetails();
-  }, [clientId]);
+  }, [clientId, matterId]); // Added matterId to dependency array
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -75,7 +78,8 @@ const ClientCaseDetails = ({
       // Choose method based on whether record exists
       const method = hasExistingRecord ? "PATCH" : "POST";
       
-      const res = await fetch(`/backend/api/clients/${clientId}/case-details`, {
+      // Save case details for specific matter
+      const res = await fetch(`/backend/api/clients/${clientId}/matters/${matterId}/case-details`, {
         method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(caseDetails),
@@ -83,6 +87,7 @@ const ClientCaseDetails = ({
 
       if (res.ok) {
         toast.success("Case details saved successfully");
+        setHasExistingRecord(true); // Mark as existing record after successful save
         onClose();
       } else {
         throw new Error("Failed to save case details");
@@ -116,10 +121,18 @@ const ClientCaseDetails = ({
           </div>
         ) : (
           <>
-            {/* Client name display */}
+            {/* Client and Matter info display */}
             <div className="mb-6 pb-3 border-b border-blue-100">
-              <p className="text-sm text-blue-600">Client</p>
-              <p className="text-lg font-medium">{clientName}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-blue-600">Client</p>
+                  <p className="text-lg font-medium">{clientName}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-600">Matter</p>
+                  <p className="text-lg font-medium">{matterTitle}</p>
+                </div>
+              </div>
             </div>
 
             {/* Form fields */}
@@ -178,7 +191,7 @@ const ClientCaseDetails = ({
                     type="date"
                     id="filingDate"
                     name="filingDate"
-                    value={caseDetails.filingDate || ""} // Make sure it's an empty string if no value is set
+                    value={caseDetails.filingDate || ""}
                     onChange={handleChange}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />

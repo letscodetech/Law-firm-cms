@@ -8,6 +8,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
 }
+
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -19,12 +20,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   resetTokens AccountResetToken[]
-
 }
 
 model Client {
   id         String   @id @default(uuid())
   name       String
+  email      String?  // Add email field
+  phone      String?  // Add phone field
+  address    String?  // Add address field
   dateOpened DateTime
   status     String
   type       String
@@ -32,7 +35,26 @@ model Client {
   updatedAt  DateTime @updatedAt
   cases      Case[]
   caseDetails CaseDetails?
+  matters     Matter[]
   billing    Billing?  // Added the relation field
+}
+
+model Matter {
+  id          Int      @id @default(autoincrement())
+  clientId    String   // Changed from Int to String
+  title       String
+  dateOpened  DateTime
+  status      String   @default("Open")
+  type        String
+  description String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("matters")
 }
 
 model Case {
@@ -62,8 +84,6 @@ model CaseDetails {
   @@map("case_details")
 }
 
-
-
 model Document {
   id        String    @id @default(uuid())
   name      String
@@ -91,6 +111,7 @@ model Billing {
   // Relation with Client
   client         Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
+
 model Event {
   id          String   @id @default(cuid())
   title       String
@@ -102,6 +123,7 @@ model Event {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
 model VerificationCode {
   id        String   @id @default(cuid())
   email     String
@@ -113,6 +135,7 @@ model VerificationCode {
   @@index([email])
   @@index([code])
 }
+
 model AccountResetToken {
   id        String   @id @default(cuid())
   token     String   @unique

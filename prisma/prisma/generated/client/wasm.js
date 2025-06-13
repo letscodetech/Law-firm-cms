@@ -135,9 +135,25 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.ClientScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
   dateOpened: 'dateOpened',
   status: 'status',
   type: 'type',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MatterScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  title: 'title',
+  dateOpened: 'dateOpened',
+  status: 'status',
+  type: 'type',
+  description: 'description',
+  sortOrder: 'sortOrder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -235,6 +251,7 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   User: 'User',
   Client: 'Client',
+  Matter: 'Matter',
   Case: 'Case',
   CaseDetails: 'CaseDetails',
   Document: 'Document',

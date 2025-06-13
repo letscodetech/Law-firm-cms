@@ -24,6 +24,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Client = $Result.DefaultSelection<Prisma.$ClientPayload>
 /**
+ * Model Matter
+ * 
+ */
+export type Matter = $Result.DefaultSelection<Prisma.$MatterPayload>
+/**
  * Model Case
  * 
  */
@@ -203,6 +208,16 @@ export class PrismaClient<
     * ```
     */
   get client(): Prisma.ClientDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.matter`: Exposes CRUD operations for the **Matter** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Matters
+    * const matters = await prisma.matter.findMany()
+    * ```
+    */
+  get matter(): Prisma.MatterDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.case`: Exposes CRUD operations for the **Case** model.
@@ -715,6 +730,7 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Client: 'Client',
+    Matter: 'Matter',
     Case: 'Case',
     CaseDetails: 'CaseDetails',
     Document: 'Document',
@@ -740,7 +756,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "client" | "case" | "caseDetails" | "document" | "billing" | "event" | "verificationCode" | "accountResetToken"
+      modelProps: "user" | "client" | "matter" | "case" | "caseDetails" | "document" | "billing" | "event" | "verificationCode" | "accountResetToken"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -889,6 +905,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ClientCountArgs<ExtArgs>
             result: $Utils.Optional<ClientCountAggregateOutputType> | number
+          }
+        }
+      }
+      Matter: {
+        payload: Prisma.$MatterPayload<ExtArgs>
+        fields: Prisma.MatterFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MatterFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MatterFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>
+          }
+          findFirst: {
+            args: Prisma.MatterFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MatterFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>
+          }
+          findMany: {
+            args: Prisma.MatterFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>[]
+          }
+          create: {
+            args: Prisma.MatterCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>
+          }
+          createMany: {
+            args: Prisma.MatterCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MatterCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>[]
+          }
+          delete: {
+            args: Prisma.MatterDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>
+          }
+          update: {
+            args: Prisma.MatterUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>
+          }
+          deleteMany: {
+            args: Prisma.MatterDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MatterUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MatterUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>[]
+          }
+          upsert: {
+            args: Prisma.MatterUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatterPayload>
+          }
+          aggregate: {
+            args: Prisma.MatterAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMatter>
+          }
+          groupBy: {
+            args: Prisma.MatterGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MatterGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MatterCountArgs<ExtArgs>
+            result: $Utils.Optional<MatterCountAggregateOutputType> | number
           }
         }
       }
@@ -1496,6 +1586,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     user?: UserOmit
     client?: ClientOmit
+    matter?: MatterOmit
     case?: CaseOmit
     caseDetails?: CaseDetailsOmit
     document?: DocumentOmit
@@ -1629,10 +1720,12 @@ export namespace Prisma {
 
   export type ClientCountOutputType = {
     cases: number
+    matters: number
   }
 
   export type ClientCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cases?: boolean | ClientCountOutputTypeCountCasesArgs
+    matters?: boolean | ClientCountOutputTypeCountMattersArgs
   }
 
   // Custom InputTypes
@@ -1651,6 +1744,13 @@ export namespace Prisma {
    */
   export type ClientCountOutputTypeCountCasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CaseWhereInput
+  }
+
+  /**
+   * ClientCountOutputType without action
+   */
+  export type ClientCountOutputTypeCountMattersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatterWhereInput
   }
 
 
@@ -2824,6 +2924,9 @@ export namespace Prisma {
   export type ClientMinAggregateOutputType = {
     id: string | null
     name: string | null
+    email: string | null
+    phone: string | null
+    address: string | null
     dateOpened: Date | null
     status: string | null
     type: string | null
@@ -2834,6 +2937,9 @@ export namespace Prisma {
   export type ClientMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    email: string | null
+    phone: string | null
+    address: string | null
     dateOpened: Date | null
     status: string | null
     type: string | null
@@ -2844,6 +2950,9 @@ export namespace Prisma {
   export type ClientCountAggregateOutputType = {
     id: number
     name: number
+    email: number
+    phone: number
+    address: number
     dateOpened: number
     status: number
     type: number
@@ -2856,6 +2965,9 @@ export namespace Prisma {
   export type ClientMinAggregateInputType = {
     id?: true
     name?: true
+    email?: true
+    phone?: true
+    address?: true
     dateOpened?: true
     status?: true
     type?: true
@@ -2866,6 +2978,9 @@ export namespace Prisma {
   export type ClientMaxAggregateInputType = {
     id?: true
     name?: true
+    email?: true
+    phone?: true
+    address?: true
     dateOpened?: true
     status?: true
     type?: true
@@ -2876,6 +2991,9 @@ export namespace Prisma {
   export type ClientCountAggregateInputType = {
     id?: true
     name?: true
+    email?: true
+    phone?: true
+    address?: true
     dateOpened?: true
     status?: true
     type?: true
@@ -2959,6 +3077,9 @@ export namespace Prisma {
   export type ClientGroupByOutputType = {
     id: string
     name: string
+    email: string | null
+    phone: string | null
+    address: string | null
     dateOpened: Date
     status: string
     type: string
@@ -2986,6 +3107,9 @@ export namespace Prisma {
   export type ClientSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    email?: boolean
+    phone?: boolean
+    address?: boolean
     dateOpened?: boolean
     status?: boolean
     type?: boolean
@@ -2993,6 +3117,7 @@ export namespace Prisma {
     updatedAt?: boolean
     cases?: boolean | Client$casesArgs<ExtArgs>
     caseDetails?: boolean | Client$caseDetailsArgs<ExtArgs>
+    matters?: boolean | Client$mattersArgs<ExtArgs>
     billing?: boolean | Client$billingArgs<ExtArgs>
     _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["client"]>
@@ -3000,6 +3125,9 @@ export namespace Prisma {
   export type ClientSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    email?: boolean
+    phone?: boolean
+    address?: boolean
     dateOpened?: boolean
     status?: boolean
     type?: boolean
@@ -3010,6 +3138,9 @@ export namespace Prisma {
   export type ClientSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    email?: boolean
+    phone?: boolean
+    address?: boolean
     dateOpened?: boolean
     status?: boolean
     type?: boolean
@@ -3020,6 +3151,9 @@ export namespace Prisma {
   export type ClientSelectScalar = {
     id?: boolean
     name?: boolean
+    email?: boolean
+    phone?: boolean
+    address?: boolean
     dateOpened?: boolean
     status?: boolean
     type?: boolean
@@ -3027,10 +3161,11 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ClientOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "dateOpened" | "status" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["client"]>
+  export type ClientOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "address" | "dateOpened" | "status" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["client"]>
   export type ClientInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cases?: boolean | Client$casesArgs<ExtArgs>
     caseDetails?: boolean | Client$caseDetailsArgs<ExtArgs>
+    matters?: boolean | Client$mattersArgs<ExtArgs>
     billing?: boolean | Client$billingArgs<ExtArgs>
     _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -3042,11 +3177,15 @@ export namespace Prisma {
     objects: {
       cases: Prisma.$CasePayload<ExtArgs>[]
       caseDetails: Prisma.$CaseDetailsPayload<ExtArgs> | null
+      matters: Prisma.$MatterPayload<ExtArgs>[]
       billing: Prisma.$BillingPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      email: string | null
+      phone: string | null
+      address: string | null
       dateOpened: Date
       status: string
       type: string
@@ -3448,6 +3587,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     cases<T extends Client$casesArgs<ExtArgs> = {}>(args?: Subset<T, Client$casesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     caseDetails<T extends Client$caseDetailsArgs<ExtArgs> = {}>(args?: Subset<T, Client$caseDetailsArgs<ExtArgs>>): Prisma__CaseDetailsClient<$Result.GetResult<Prisma.$CaseDetailsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    matters<T extends Client$mattersArgs<ExtArgs> = {}>(args?: Subset<T, Client$mattersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     billing<T extends Client$billingArgs<ExtArgs> = {}>(args?: Subset<T, Client$billingArgs<ExtArgs>>): Prisma__BillingClient<$Result.GetResult<Prisma.$BillingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3480,6 +3620,9 @@ export namespace Prisma {
   interface ClientFieldRefs {
     readonly id: FieldRef<"Client", 'String'>
     readonly name: FieldRef<"Client", 'String'>
+    readonly email: FieldRef<"Client", 'String'>
+    readonly phone: FieldRef<"Client", 'String'>
+    readonly address: FieldRef<"Client", 'String'>
     readonly dateOpened: FieldRef<"Client", 'DateTime'>
     readonly status: FieldRef<"Client", 'String'>
     readonly type: FieldRef<"Client", 'String'>
@@ -3916,6 +4059,30 @@ export namespace Prisma {
   }
 
   /**
+   * Client.matters
+   */
+  export type Client$mattersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    where?: MatterWhereInput
+    orderBy?: MatterOrderByWithRelationInput | MatterOrderByWithRelationInput[]
+    cursor?: MatterWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MatterScalarFieldEnum | MatterScalarFieldEnum[]
+  }
+
+  /**
    * Client.billing
    */
   export type Client$billingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3950,6 +4117,1167 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ClientInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Matter
+   */
+
+  export type AggregateMatter = {
+    _count: MatterCountAggregateOutputType | null
+    _avg: MatterAvgAggregateOutputType | null
+    _sum: MatterSumAggregateOutputType | null
+    _min: MatterMinAggregateOutputType | null
+    _max: MatterMaxAggregateOutputType | null
+  }
+
+  export type MatterAvgAggregateOutputType = {
+    id: number | null
+    sortOrder: number | null
+  }
+
+  export type MatterSumAggregateOutputType = {
+    id: number | null
+    sortOrder: number | null
+  }
+
+  export type MatterMinAggregateOutputType = {
+    id: number | null
+    clientId: string | null
+    title: string | null
+    dateOpened: Date | null
+    status: string | null
+    type: string | null
+    description: string | null
+    sortOrder: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MatterMaxAggregateOutputType = {
+    id: number | null
+    clientId: string | null
+    title: string | null
+    dateOpened: Date | null
+    status: string | null
+    type: string | null
+    description: string | null
+    sortOrder: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MatterCountAggregateOutputType = {
+    id: number
+    clientId: number
+    title: number
+    dateOpened: number
+    status: number
+    type: number
+    description: number
+    sortOrder: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MatterAvgAggregateInputType = {
+    id?: true
+    sortOrder?: true
+  }
+
+  export type MatterSumAggregateInputType = {
+    id?: true
+    sortOrder?: true
+  }
+
+  export type MatterMinAggregateInputType = {
+    id?: true
+    clientId?: true
+    title?: true
+    dateOpened?: true
+    status?: true
+    type?: true
+    description?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MatterMaxAggregateInputType = {
+    id?: true
+    clientId?: true
+    title?: true
+    dateOpened?: true
+    status?: true
+    type?: true
+    description?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MatterCountAggregateInputType = {
+    id?: true
+    clientId?: true
+    title?: true
+    dateOpened?: true
+    status?: true
+    type?: true
+    description?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MatterAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Matter to aggregate.
+     */
+    where?: MatterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Matters to fetch.
+     */
+    orderBy?: MatterOrderByWithRelationInput | MatterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MatterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Matters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Matters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Matters
+    **/
+    _count?: true | MatterCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MatterAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MatterSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MatterMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MatterMaxAggregateInputType
+  }
+
+  export type GetMatterAggregateType<T extends MatterAggregateArgs> = {
+        [P in keyof T & keyof AggregateMatter]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMatter[P]>
+      : GetScalarType<T[P], AggregateMatter[P]>
+  }
+
+
+
+
+  export type MatterGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatterWhereInput
+    orderBy?: MatterOrderByWithAggregationInput | MatterOrderByWithAggregationInput[]
+    by: MatterScalarFieldEnum[] | MatterScalarFieldEnum
+    having?: MatterScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MatterCountAggregateInputType | true
+    _avg?: MatterAvgAggregateInputType
+    _sum?: MatterSumAggregateInputType
+    _min?: MatterMinAggregateInputType
+    _max?: MatterMaxAggregateInputType
+  }
+
+  export type MatterGroupByOutputType = {
+    id: number
+    clientId: string
+    title: string
+    dateOpened: Date
+    status: string
+    type: string
+    description: string | null
+    sortOrder: number
+    createdAt: Date
+    updatedAt: Date
+    _count: MatterCountAggregateOutputType | null
+    _avg: MatterAvgAggregateOutputType | null
+    _sum: MatterSumAggregateOutputType | null
+    _min: MatterMinAggregateOutputType | null
+    _max: MatterMaxAggregateOutputType | null
+  }
+
+  type GetMatterGroupByPayload<T extends MatterGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MatterGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MatterGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MatterGroupByOutputType[P]>
+            : GetScalarType<T[P], MatterGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MatterSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    clientId?: boolean
+    title?: boolean
+    dateOpened?: boolean
+    status?: boolean
+    type?: boolean
+    description?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    client?: boolean | ClientDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matter"]>
+
+  export type MatterSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    clientId?: boolean
+    title?: boolean
+    dateOpened?: boolean
+    status?: boolean
+    type?: boolean
+    description?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    client?: boolean | ClientDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matter"]>
+
+  export type MatterSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    clientId?: boolean
+    title?: boolean
+    dateOpened?: boolean
+    status?: boolean
+    type?: boolean
+    description?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    client?: boolean | ClientDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matter"]>
+
+  export type MatterSelectScalar = {
+    id?: boolean
+    clientId?: boolean
+    title?: boolean
+    dateOpened?: boolean
+    status?: boolean
+    type?: boolean
+    description?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MatterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientId" | "title" | "dateOpened" | "status" | "type" | "description" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["matter"]>
+  export type MatterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | ClientDefaultArgs<ExtArgs>
+  }
+  export type MatterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | ClientDefaultArgs<ExtArgs>
+  }
+  export type MatterIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | ClientDefaultArgs<ExtArgs>
+  }
+
+  export type $MatterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Matter"
+    objects: {
+      client: Prisma.$ClientPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      clientId: string
+      title: string
+      dateOpened: Date
+      status: string
+      type: string
+      description: string | null
+      sortOrder: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["matter"]>
+    composites: {}
+  }
+
+  type MatterGetPayload<S extends boolean | null | undefined | MatterDefaultArgs> = $Result.GetResult<Prisma.$MatterPayload, S>
+
+  type MatterCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MatterFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MatterCountAggregateInputType | true
+    }
+
+  export interface MatterDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Matter'], meta: { name: 'Matter' } }
+    /**
+     * Find zero or one Matter that matches the filter.
+     * @param {MatterFindUniqueArgs} args - Arguments to find a Matter
+     * @example
+     * // Get one Matter
+     * const matter = await prisma.matter.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MatterFindUniqueArgs>(args: SelectSubset<T, MatterFindUniqueArgs<ExtArgs>>): Prisma__MatterClient<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Matter that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MatterFindUniqueOrThrowArgs} args - Arguments to find a Matter
+     * @example
+     * // Get one Matter
+     * const matter = await prisma.matter.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MatterFindUniqueOrThrowArgs>(args: SelectSubset<T, MatterFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MatterClient<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Matter that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatterFindFirstArgs} args - Arguments to find a Matter
+     * @example
+     * // Get one Matter
+     * const matter = await prisma.matter.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MatterFindFirstArgs>(args?: SelectSubset<T, MatterFindFirstArgs<ExtArgs>>): Prisma__MatterClient<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Matter that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatterFindFirstOrThrowArgs} args - Arguments to find a Matter
+     * @example
+     * // Get one Matter
+     * const matter = await prisma.matter.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MatterFindFirstOrThrowArgs>(args?: SelectSubset<T, MatterFindFirstOrThrowArgs<ExtArgs>>): Prisma__MatterClient<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Matters that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatterFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Matters
+     * const matters = await prisma.matter.findMany()
+     * 
+     * // Get first 10 Matters
+     * const matters = await prisma.matter.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const matterWithIdOnly = await prisma.matter.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MatterFindManyArgs>(args?: SelectSubset<T, MatterFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Matter.
+     * @param {MatterCreateArgs} args - Arguments to create a Matter.
+     * @example
+     * // Create one Matter
+     * const Matter = await prisma.matter.create({
+     *   data: {
+     *     // ... data to create a Matter
+     *   }
+     * })
+     * 
+     */
+    create<T extends MatterCreateArgs>(args: SelectSubset<T, MatterCreateArgs<ExtArgs>>): Prisma__MatterClient<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Matters.
+     * @param {MatterCreateManyArgs} args - Arguments to create many Matters.
+     * @example
+     * // Create many Matters
+     * const matter = await prisma.matter.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MatterCreateManyArgs>(args?: SelectSubset<T, MatterCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Matters and returns the data saved in the database.
+     * @param {MatterCreateManyAndReturnArgs} args - Arguments to create many Matters.
+     * @example
+     * // Create many Matters
+     * const matter = await prisma.matter.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Matters and only return the `id`
+     * const matterWithIdOnly = await prisma.matter.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MatterCreateManyAndReturnArgs>(args?: SelectSubset<T, MatterCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Matter.
+     * @param {MatterDeleteArgs} args - Arguments to delete one Matter.
+     * @example
+     * // Delete one Matter
+     * const Matter = await prisma.matter.delete({
+     *   where: {
+     *     // ... filter to delete one Matter
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MatterDeleteArgs>(args: SelectSubset<T, MatterDeleteArgs<ExtArgs>>): Prisma__MatterClient<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Matter.
+     * @param {MatterUpdateArgs} args - Arguments to update one Matter.
+     * @example
+     * // Update one Matter
+     * const matter = await prisma.matter.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MatterUpdateArgs>(args: SelectSubset<T, MatterUpdateArgs<ExtArgs>>): Prisma__MatterClient<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Matters.
+     * @param {MatterDeleteManyArgs} args - Arguments to filter Matters to delete.
+     * @example
+     * // Delete a few Matters
+     * const { count } = await prisma.matter.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MatterDeleteManyArgs>(args?: SelectSubset<T, MatterDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Matters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatterUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Matters
+     * const matter = await prisma.matter.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MatterUpdateManyArgs>(args: SelectSubset<T, MatterUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Matters and returns the data updated in the database.
+     * @param {MatterUpdateManyAndReturnArgs} args - Arguments to update many Matters.
+     * @example
+     * // Update many Matters
+     * const matter = await prisma.matter.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Matters and only return the `id`
+     * const matterWithIdOnly = await prisma.matter.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MatterUpdateManyAndReturnArgs>(args: SelectSubset<T, MatterUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Matter.
+     * @param {MatterUpsertArgs} args - Arguments to update or create a Matter.
+     * @example
+     * // Update or create a Matter
+     * const matter = await prisma.matter.upsert({
+     *   create: {
+     *     // ... data to create a Matter
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Matter we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MatterUpsertArgs>(args: SelectSubset<T, MatterUpsertArgs<ExtArgs>>): Prisma__MatterClient<$Result.GetResult<Prisma.$MatterPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Matters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatterCountArgs} args - Arguments to filter Matters to count.
+     * @example
+     * // Count the number of Matters
+     * const count = await prisma.matter.count({
+     *   where: {
+     *     // ... the filter for the Matters we want to count
+     *   }
+     * })
+    **/
+    count<T extends MatterCountArgs>(
+      args?: Subset<T, MatterCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MatterCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Matter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatterAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MatterAggregateArgs>(args: Subset<T, MatterAggregateArgs>): Prisma.PrismaPromise<GetMatterAggregateType<T>>
+
+    /**
+     * Group by Matter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatterGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MatterGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MatterGroupByArgs['orderBy'] }
+        : { orderBy?: MatterGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MatterGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMatterGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Matter model
+   */
+  readonly fields: MatterFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Matter.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MatterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    client<T extends ClientDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClientDefaultArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Matter model
+   */
+  interface MatterFieldRefs {
+    readonly id: FieldRef<"Matter", 'Int'>
+    readonly clientId: FieldRef<"Matter", 'String'>
+    readonly title: FieldRef<"Matter", 'String'>
+    readonly dateOpened: FieldRef<"Matter", 'DateTime'>
+    readonly status: FieldRef<"Matter", 'String'>
+    readonly type: FieldRef<"Matter", 'String'>
+    readonly description: FieldRef<"Matter", 'String'>
+    readonly sortOrder: FieldRef<"Matter", 'Int'>
+    readonly createdAt: FieldRef<"Matter", 'DateTime'>
+    readonly updatedAt: FieldRef<"Matter", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Matter findUnique
+   */
+  export type MatterFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * Filter, which Matter to fetch.
+     */
+    where: MatterWhereUniqueInput
+  }
+
+  /**
+   * Matter findUniqueOrThrow
+   */
+  export type MatterFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * Filter, which Matter to fetch.
+     */
+    where: MatterWhereUniqueInput
+  }
+
+  /**
+   * Matter findFirst
+   */
+  export type MatterFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * Filter, which Matter to fetch.
+     */
+    where?: MatterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Matters to fetch.
+     */
+    orderBy?: MatterOrderByWithRelationInput | MatterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Matters.
+     */
+    cursor?: MatterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Matters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Matters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Matters.
+     */
+    distinct?: MatterScalarFieldEnum | MatterScalarFieldEnum[]
+  }
+
+  /**
+   * Matter findFirstOrThrow
+   */
+  export type MatterFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * Filter, which Matter to fetch.
+     */
+    where?: MatterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Matters to fetch.
+     */
+    orderBy?: MatterOrderByWithRelationInput | MatterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Matters.
+     */
+    cursor?: MatterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Matters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Matters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Matters.
+     */
+    distinct?: MatterScalarFieldEnum | MatterScalarFieldEnum[]
+  }
+
+  /**
+   * Matter findMany
+   */
+  export type MatterFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * Filter, which Matters to fetch.
+     */
+    where?: MatterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Matters to fetch.
+     */
+    orderBy?: MatterOrderByWithRelationInput | MatterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Matters.
+     */
+    cursor?: MatterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Matters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Matters.
+     */
+    skip?: number
+    distinct?: MatterScalarFieldEnum | MatterScalarFieldEnum[]
+  }
+
+  /**
+   * Matter create
+   */
+  export type MatterCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Matter.
+     */
+    data: XOR<MatterCreateInput, MatterUncheckedCreateInput>
+  }
+
+  /**
+   * Matter createMany
+   */
+  export type MatterCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Matters.
+     */
+    data: MatterCreateManyInput | MatterCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Matter createManyAndReturn
+   */
+  export type MatterCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * The data used to create many Matters.
+     */
+    data: MatterCreateManyInput | MatterCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Matter update
+   */
+  export type MatterUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Matter.
+     */
+    data: XOR<MatterUpdateInput, MatterUncheckedUpdateInput>
+    /**
+     * Choose, which Matter to update.
+     */
+    where: MatterWhereUniqueInput
+  }
+
+  /**
+   * Matter updateMany
+   */
+  export type MatterUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Matters.
+     */
+    data: XOR<MatterUpdateManyMutationInput, MatterUncheckedUpdateManyInput>
+    /**
+     * Filter which Matters to update
+     */
+    where?: MatterWhereInput
+    /**
+     * Limit how many Matters to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Matter updateManyAndReturn
+   */
+  export type MatterUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * The data used to update Matters.
+     */
+    data: XOR<MatterUpdateManyMutationInput, MatterUncheckedUpdateManyInput>
+    /**
+     * Filter which Matters to update
+     */
+    where?: MatterWhereInput
+    /**
+     * Limit how many Matters to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Matter upsert
+   */
+  export type MatterUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Matter to update in case it exists.
+     */
+    where: MatterWhereUniqueInput
+    /**
+     * In case the Matter found by the `where` argument doesn't exist, create a new Matter with this data.
+     */
+    create: XOR<MatterCreateInput, MatterUncheckedCreateInput>
+    /**
+     * In case the Matter was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MatterUpdateInput, MatterUncheckedUpdateInput>
+  }
+
+  /**
+   * Matter delete
+   */
+  export type MatterDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
+    /**
+     * Filter which Matter to delete.
+     */
+    where: MatterWhereUniqueInput
+  }
+
+  /**
+   * Matter deleteMany
+   */
+  export type MatterDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Matters to delete
+     */
+    where?: MatterWhereInput
+    /**
+     * Limit how many Matters to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Matter without action
+   */
+  export type MatterDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Matter
+     */
+    select?: MatterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Matter
+     */
+    omit?: MatterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatterInclude<ExtArgs> | null
   }
 
 
@@ -11692,6 +13020,9 @@ export namespace Prisma {
   export const ClientScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    email: 'email',
+    phone: 'phone',
+    address: 'address',
     dateOpened: 'dateOpened',
     status: 'status',
     type: 'type',
@@ -11700,6 +13031,22 @@ export namespace Prisma {
   };
 
   export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
+
+
+  export const MatterScalarFieldEnum: {
+    id: 'id',
+    clientId: 'clientId',
+    title: 'title',
+    dateOpened: 'dateOpened',
+    status: 'status',
+    type: 'type',
+    description: 'description',
+    sortOrder: 'sortOrder',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MatterScalarFieldEnum = (typeof MatterScalarFieldEnum)[keyof typeof MatterScalarFieldEnum]
 
 
   export const CaseScalarFieldEnum: {
@@ -11973,6 +13320,9 @@ export namespace Prisma {
     NOT?: ClientWhereInput | ClientWhereInput[]
     id?: StringFilter<"Client"> | string
     name?: StringFilter<"Client"> | string
+    email?: StringNullableFilter<"Client"> | string | null
+    phone?: StringNullableFilter<"Client"> | string | null
+    address?: StringNullableFilter<"Client"> | string | null
     dateOpened?: DateTimeFilter<"Client"> | Date | string
     status?: StringFilter<"Client"> | string
     type?: StringFilter<"Client"> | string
@@ -11980,12 +13330,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Client"> | Date | string
     cases?: CaseListRelationFilter
     caseDetails?: XOR<CaseDetailsNullableScalarRelationFilter, CaseDetailsWhereInput> | null
+    matters?: MatterListRelationFilter
     billing?: XOR<BillingNullableScalarRelationFilter, BillingWhereInput> | null
   }
 
   export type ClientOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
     dateOpened?: SortOrder
     status?: SortOrder
     type?: SortOrder
@@ -11993,6 +13347,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     cases?: CaseOrderByRelationAggregateInput
     caseDetails?: CaseDetailsOrderByWithRelationInput
+    matters?: MatterOrderByRelationAggregateInput
     billing?: BillingOrderByWithRelationInput
   }
 
@@ -12002,6 +13357,9 @@ export namespace Prisma {
     OR?: ClientWhereInput[]
     NOT?: ClientWhereInput | ClientWhereInput[]
     name?: StringFilter<"Client"> | string
+    email?: StringNullableFilter<"Client"> | string | null
+    phone?: StringNullableFilter<"Client"> | string | null
+    address?: StringNullableFilter<"Client"> | string | null
     dateOpened?: DateTimeFilter<"Client"> | Date | string
     status?: StringFilter<"Client"> | string
     type?: StringFilter<"Client"> | string
@@ -12009,12 +13367,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Client"> | Date | string
     cases?: CaseListRelationFilter
     caseDetails?: XOR<CaseDetailsNullableScalarRelationFilter, CaseDetailsWhereInput> | null
+    matters?: MatterListRelationFilter
     billing?: XOR<BillingNullableScalarRelationFilter, BillingWhereInput> | null
   }, "id">
 
   export type ClientOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
     dateOpened?: SortOrder
     status?: SortOrder
     type?: SortOrder
@@ -12031,11 +13393,96 @@ export namespace Prisma {
     NOT?: ClientScalarWhereWithAggregatesInput | ClientScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Client"> | string
     name?: StringWithAggregatesFilter<"Client"> | string
+    email?: StringNullableWithAggregatesFilter<"Client"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Client"> | string | null
+    address?: StringNullableWithAggregatesFilter<"Client"> | string | null
     dateOpened?: DateTimeWithAggregatesFilter<"Client"> | Date | string
     status?: StringWithAggregatesFilter<"Client"> | string
     type?: StringWithAggregatesFilter<"Client"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Client"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Client"> | Date | string
+  }
+
+  export type MatterWhereInput = {
+    AND?: MatterWhereInput | MatterWhereInput[]
+    OR?: MatterWhereInput[]
+    NOT?: MatterWhereInput | MatterWhereInput[]
+    id?: IntFilter<"Matter"> | number
+    clientId?: StringFilter<"Matter"> | string
+    title?: StringFilter<"Matter"> | string
+    dateOpened?: DateTimeFilter<"Matter"> | Date | string
+    status?: StringFilter<"Matter"> | string
+    type?: StringFilter<"Matter"> | string
+    description?: StringNullableFilter<"Matter"> | string | null
+    sortOrder?: IntFilter<"Matter"> | number
+    createdAt?: DateTimeFilter<"Matter"> | Date | string
+    updatedAt?: DateTimeFilter<"Matter"> | Date | string
+    client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
+  }
+
+  export type MatterOrderByWithRelationInput = {
+    id?: SortOrder
+    clientId?: SortOrder
+    title?: SortOrder
+    dateOpened?: SortOrder
+    status?: SortOrder
+    type?: SortOrder
+    description?: SortOrderInput | SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    client?: ClientOrderByWithRelationInput
+  }
+
+  export type MatterWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: MatterWhereInput | MatterWhereInput[]
+    OR?: MatterWhereInput[]
+    NOT?: MatterWhereInput | MatterWhereInput[]
+    clientId?: StringFilter<"Matter"> | string
+    title?: StringFilter<"Matter"> | string
+    dateOpened?: DateTimeFilter<"Matter"> | Date | string
+    status?: StringFilter<"Matter"> | string
+    type?: StringFilter<"Matter"> | string
+    description?: StringNullableFilter<"Matter"> | string | null
+    sortOrder?: IntFilter<"Matter"> | number
+    createdAt?: DateTimeFilter<"Matter"> | Date | string
+    updatedAt?: DateTimeFilter<"Matter"> | Date | string
+    client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
+  }, "id">
+
+  export type MatterOrderByWithAggregationInput = {
+    id?: SortOrder
+    clientId?: SortOrder
+    title?: SortOrder
+    dateOpened?: SortOrder
+    status?: SortOrder
+    type?: SortOrder
+    description?: SortOrderInput | SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MatterCountOrderByAggregateInput
+    _avg?: MatterAvgOrderByAggregateInput
+    _max?: MatterMaxOrderByAggregateInput
+    _min?: MatterMinOrderByAggregateInput
+    _sum?: MatterSumOrderByAggregateInput
+  }
+
+  export type MatterScalarWhereWithAggregatesInput = {
+    AND?: MatterScalarWhereWithAggregatesInput | MatterScalarWhereWithAggregatesInput[]
+    OR?: MatterScalarWhereWithAggregatesInput[]
+    NOT?: MatterScalarWhereWithAggregatesInput | MatterScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Matter"> | number
+    clientId?: StringWithAggregatesFilter<"Matter"> | string
+    title?: StringWithAggregatesFilter<"Matter"> | string
+    dateOpened?: DateTimeWithAggregatesFilter<"Matter"> | Date | string
+    status?: StringWithAggregatesFilter<"Matter"> | string
+    type?: StringWithAggregatesFilter<"Matter"> | string
+    description?: StringNullableWithAggregatesFilter<"Matter"> | string | null
+    sortOrder?: IntWithAggregatesFilter<"Matter"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Matter"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Matter"> | Date | string
   }
 
   export type CaseWhereInput = {
@@ -12609,6 +14056,9 @@ export namespace Prisma {
   export type ClientCreateInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
@@ -12616,12 +14066,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     cases?: CaseCreateNestedManyWithoutClientInput
     caseDetails?: CaseDetailsCreateNestedOneWithoutClientInput
+    matters?: MatterCreateNestedManyWithoutClientInput
     billing?: BillingCreateNestedOneWithoutClientInput
   }
 
   export type ClientUncheckedCreateInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
@@ -12629,12 +14083,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     cases?: CaseUncheckedCreateNestedManyWithoutClientInput
     caseDetails?: CaseDetailsUncheckedCreateNestedOneWithoutClientInput
+    matters?: MatterUncheckedCreateNestedManyWithoutClientInput
     billing?: BillingUncheckedCreateNestedOneWithoutClientInput
   }
 
   export type ClientUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -12642,12 +14100,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUpdateManyWithoutClientNestedInput
     caseDetails?: CaseDetailsUpdateOneWithoutClientNestedInput
+    matters?: MatterUpdateManyWithoutClientNestedInput
     billing?: BillingUpdateOneWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -12655,12 +14117,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutClientNestedInput
     caseDetails?: CaseDetailsUncheckedUpdateOneWithoutClientNestedInput
+    matters?: MatterUncheckedUpdateManyWithoutClientNestedInput
     billing?: BillingUncheckedUpdateOneWithoutClientNestedInput
   }
 
   export type ClientCreateManyInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
@@ -12671,6 +14137,9 @@ export namespace Prisma {
   export type ClientUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -12681,9 +14150,99 @@ export namespace Prisma {
   export type ClientUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatterCreateInput = {
+    title: string
+    dateOpened: Date | string
+    status?: string
+    type: string
+    description?: string | null
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    client: ClientCreateNestedOneWithoutMattersInput
+  }
+
+  export type MatterUncheckedCreateInput = {
+    id?: number
+    clientId: string
+    title: string
+    dateOpened: Date | string
+    status?: string
+    type: string
+    description?: string | null
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatterUpdateInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneRequiredWithoutMattersNestedInput
+  }
+
+  export type MatterUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    clientId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatterCreateManyInput = {
+    id?: number
+    clientId: string
+    title: string
+    dateOpened: Date | string
+    status?: string
+    type: string
+    description?: string | null
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatterUpdateManyMutationInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatterUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    clientId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13365,6 +14924,12 @@ export namespace Prisma {
     isNot?: CaseDetailsWhereInput | null
   }
 
+  export type MatterListRelationFilter = {
+    every?: MatterWhereInput
+    some?: MatterWhereInput
+    none?: MatterWhereInput
+  }
+
   export type BillingNullableScalarRelationFilter = {
     is?: BillingWhereInput | null
     isNot?: BillingWhereInput | null
@@ -13374,9 +14939,16 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type MatterOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ClientCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    address?: SortOrder
     dateOpened?: SortOrder
     status?: SortOrder
     type?: SortOrder
@@ -13387,6 +14959,9 @@ export namespace Prisma {
   export type ClientMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    address?: SortOrder
     dateOpened?: SortOrder
     status?: SortOrder
     type?: SortOrder
@@ -13397,6 +14972,9 @@ export namespace Prisma {
   export type ClientMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    address?: SortOrder
     dateOpened?: SortOrder
     status?: SortOrder
     type?: SortOrder
@@ -13418,6 +14996,71 @@ export namespace Prisma {
   export type ClientScalarRelationFilter = {
     is?: ClientWhereInput
     isNot?: ClientWhereInput
+  }
+
+  export type MatterCountOrderByAggregateInput = {
+    id?: SortOrder
+    clientId?: SortOrder
+    title?: SortOrder
+    dateOpened?: SortOrder
+    status?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MatterAvgOrderByAggregateInput = {
+    id?: SortOrder
+    sortOrder?: SortOrder
+  }
+
+  export type MatterMaxOrderByAggregateInput = {
+    id?: SortOrder
+    clientId?: SortOrder
+    title?: SortOrder
+    dateOpened?: SortOrder
+    status?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MatterMinOrderByAggregateInput = {
+    id?: SortOrder
+    clientId?: SortOrder
+    title?: SortOrder
+    dateOpened?: SortOrder
+    status?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MatterSumOrderByAggregateInput = {
+    id?: SortOrder
+    sortOrder?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type CaseCountOrderByAggregateInput = {
@@ -13456,22 +15099,6 @@ export namespace Prisma {
 
   export type CaseSumOrderByAggregateInput = {
     id?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type CaseDetailsCountOrderByAggregateInput = {
@@ -13839,6 +15466,13 @@ export namespace Prisma {
     connect?: CaseDetailsWhereUniqueInput
   }
 
+  export type MatterCreateNestedManyWithoutClientInput = {
+    create?: XOR<MatterCreateWithoutClientInput, MatterUncheckedCreateWithoutClientInput> | MatterCreateWithoutClientInput[] | MatterUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: MatterCreateOrConnectWithoutClientInput | MatterCreateOrConnectWithoutClientInput[]
+    createMany?: MatterCreateManyClientInputEnvelope
+    connect?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+  }
+
   export type BillingCreateNestedOneWithoutClientInput = {
     create?: XOR<BillingCreateWithoutClientInput, BillingUncheckedCreateWithoutClientInput>
     connectOrCreate?: BillingCreateOrConnectWithoutClientInput
@@ -13856,6 +15490,13 @@ export namespace Prisma {
     create?: XOR<CaseDetailsCreateWithoutClientInput, CaseDetailsUncheckedCreateWithoutClientInput>
     connectOrCreate?: CaseDetailsCreateOrConnectWithoutClientInput
     connect?: CaseDetailsWhereUniqueInput
+  }
+
+  export type MatterUncheckedCreateNestedManyWithoutClientInput = {
+    create?: XOR<MatterCreateWithoutClientInput, MatterUncheckedCreateWithoutClientInput> | MatterCreateWithoutClientInput[] | MatterUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: MatterCreateOrConnectWithoutClientInput | MatterCreateOrConnectWithoutClientInput[]
+    createMany?: MatterCreateManyClientInputEnvelope
+    connect?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
   }
 
   export type BillingUncheckedCreateNestedOneWithoutClientInput = {
@@ -13886,6 +15527,20 @@ export namespace Prisma {
     delete?: CaseDetailsWhereInput | boolean
     connect?: CaseDetailsWhereUniqueInput
     update?: XOR<XOR<CaseDetailsUpdateToOneWithWhereWithoutClientInput, CaseDetailsUpdateWithoutClientInput>, CaseDetailsUncheckedUpdateWithoutClientInput>
+  }
+
+  export type MatterUpdateManyWithoutClientNestedInput = {
+    create?: XOR<MatterCreateWithoutClientInput, MatterUncheckedCreateWithoutClientInput> | MatterCreateWithoutClientInput[] | MatterUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: MatterCreateOrConnectWithoutClientInput | MatterCreateOrConnectWithoutClientInput[]
+    upsert?: MatterUpsertWithWhereUniqueWithoutClientInput | MatterUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: MatterCreateManyClientInputEnvelope
+    set?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+    disconnect?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+    delete?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+    connect?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+    update?: MatterUpdateWithWhereUniqueWithoutClientInput | MatterUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: MatterUpdateManyWithWhereWithoutClientInput | MatterUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: MatterScalarWhereInput | MatterScalarWhereInput[]
   }
 
   export type BillingUpdateOneWithoutClientNestedInput = {
@@ -13922,6 +15577,20 @@ export namespace Prisma {
     update?: XOR<XOR<CaseDetailsUpdateToOneWithWhereWithoutClientInput, CaseDetailsUpdateWithoutClientInput>, CaseDetailsUncheckedUpdateWithoutClientInput>
   }
 
+  export type MatterUncheckedUpdateManyWithoutClientNestedInput = {
+    create?: XOR<MatterCreateWithoutClientInput, MatterUncheckedCreateWithoutClientInput> | MatterCreateWithoutClientInput[] | MatterUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: MatterCreateOrConnectWithoutClientInput | MatterCreateOrConnectWithoutClientInput[]
+    upsert?: MatterUpsertWithWhereUniqueWithoutClientInput | MatterUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: MatterCreateManyClientInputEnvelope
+    set?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+    disconnect?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+    delete?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+    connect?: MatterWhereUniqueInput | MatterWhereUniqueInput[]
+    update?: MatterUpdateWithWhereUniqueWithoutClientInput | MatterUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: MatterUpdateManyWithWhereWithoutClientInput | MatterUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: MatterScalarWhereInput | MatterScalarWhereInput[]
+  }
+
   export type BillingUncheckedUpdateOneWithoutClientNestedInput = {
     create?: XOR<BillingCreateWithoutClientInput, BillingUncheckedCreateWithoutClientInput>
     connectOrCreate?: BillingCreateOrConnectWithoutClientInput
@@ -13930,6 +15599,28 @@ export namespace Prisma {
     delete?: BillingWhereInput | boolean
     connect?: BillingWhereUniqueInput
     update?: XOR<XOR<BillingUpdateToOneWithWhereWithoutClientInput, BillingUpdateWithoutClientInput>, BillingUncheckedUpdateWithoutClientInput>
+  }
+
+  export type ClientCreateNestedOneWithoutMattersInput = {
+    create?: XOR<ClientCreateWithoutMattersInput, ClientUncheckedCreateWithoutMattersInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutMattersInput
+    connect?: ClientWhereUniqueInput
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type ClientUpdateOneRequiredWithoutMattersNestedInput = {
+    create?: XOR<ClientCreateWithoutMattersInput, ClientUncheckedCreateWithoutMattersInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutMattersInput
+    upsert?: ClientUpsertWithoutMattersInput
+    connect?: ClientWhereUniqueInput
+    update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutMattersInput, ClientUpdateWithoutMattersInput>, ClientUncheckedUpdateWithoutMattersInput>
   }
 
   export type ClientCreateNestedOneWithoutCasesInput = {
@@ -13944,14 +15635,6 @@ export namespace Prisma {
     upsert?: ClientUpsertWithoutCasesInput
     connect?: ClientWhereUniqueInput
     update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutCasesInput, ClientUpdateWithoutCasesInput>, ClientUncheckedUpdateWithoutCasesInput>
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ClientCreateNestedOneWithoutCaseDetailsInput = {
@@ -14366,6 +16049,39 @@ export namespace Prisma {
     create: XOR<CaseDetailsCreateWithoutClientInput, CaseDetailsUncheckedCreateWithoutClientInput>
   }
 
+  export type MatterCreateWithoutClientInput = {
+    title: string
+    dateOpened: Date | string
+    status?: string
+    type: string
+    description?: string | null
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatterUncheckedCreateWithoutClientInput = {
+    id?: number
+    title: string
+    dateOpened: Date | string
+    status?: string
+    type: string
+    description?: string | null
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatterCreateOrConnectWithoutClientInput = {
+    where: MatterWhereUniqueInput
+    create: XOR<MatterCreateWithoutClientInput, MatterUncheckedCreateWithoutClientInput>
+  }
+
+  export type MatterCreateManyClientInputEnvelope = {
+    data: MatterCreateManyClientInput | MatterCreateManyClientInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BillingCreateWithoutClientInput = {
     id?: string
     clientName?: string | null
@@ -14452,6 +16168,38 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MatterUpsertWithWhereUniqueWithoutClientInput = {
+    where: MatterWhereUniqueInput
+    update: XOR<MatterUpdateWithoutClientInput, MatterUncheckedUpdateWithoutClientInput>
+    create: XOR<MatterCreateWithoutClientInput, MatterUncheckedCreateWithoutClientInput>
+  }
+
+  export type MatterUpdateWithWhereUniqueWithoutClientInput = {
+    where: MatterWhereUniqueInput
+    data: XOR<MatterUpdateWithoutClientInput, MatterUncheckedUpdateWithoutClientInput>
+  }
+
+  export type MatterUpdateManyWithWhereWithoutClientInput = {
+    where: MatterScalarWhereInput
+    data: XOR<MatterUpdateManyMutationInput, MatterUncheckedUpdateManyWithoutClientInput>
+  }
+
+  export type MatterScalarWhereInput = {
+    AND?: MatterScalarWhereInput | MatterScalarWhereInput[]
+    OR?: MatterScalarWhereInput[]
+    NOT?: MatterScalarWhereInput | MatterScalarWhereInput[]
+    id?: IntFilter<"Matter"> | number
+    clientId?: StringFilter<"Matter"> | string
+    title?: StringFilter<"Matter"> | string
+    dateOpened?: DateTimeFilter<"Matter"> | Date | string
+    status?: StringFilter<"Matter"> | string
+    type?: StringFilter<"Matter"> | string
+    description?: StringNullableFilter<"Matter"> | string | null
+    sortOrder?: IntFilter<"Matter"> | number
+    createdAt?: DateTimeFilter<"Matter"> | Date | string
+    updatedAt?: DateTimeFilter<"Matter"> | Date | string
+  }
+
   export type BillingUpsertWithoutClientInput = {
     update: XOR<BillingUpdateWithoutClientInput, BillingUncheckedUpdateWithoutClientInput>
     create: XOR<BillingCreateWithoutClientInput, BillingUncheckedCreateWithoutClientInput>
@@ -14483,27 +16231,115 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ClientCreateWithoutMattersInput = {
+    id?: string
+    name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
+    dateOpened: Date | string
+    status: string
+    type: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    cases?: CaseCreateNestedManyWithoutClientInput
+    caseDetails?: CaseDetailsCreateNestedOneWithoutClientInput
+    billing?: BillingCreateNestedOneWithoutClientInput
+  }
+
+  export type ClientUncheckedCreateWithoutMattersInput = {
+    id?: string
+    name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
+    dateOpened: Date | string
+    status: string
+    type: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    cases?: CaseUncheckedCreateNestedManyWithoutClientInput
+    caseDetails?: CaseDetailsUncheckedCreateNestedOneWithoutClientInput
+    billing?: BillingUncheckedCreateNestedOneWithoutClientInput
+  }
+
+  export type ClientCreateOrConnectWithoutMattersInput = {
+    where: ClientWhereUniqueInput
+    create: XOR<ClientCreateWithoutMattersInput, ClientUncheckedCreateWithoutMattersInput>
+  }
+
+  export type ClientUpsertWithoutMattersInput = {
+    update: XOR<ClientUpdateWithoutMattersInput, ClientUncheckedUpdateWithoutMattersInput>
+    create: XOR<ClientCreateWithoutMattersInput, ClientUncheckedCreateWithoutMattersInput>
+    where?: ClientWhereInput
+  }
+
+  export type ClientUpdateToOneWithWhereWithoutMattersInput = {
+    where?: ClientWhereInput
+    data: XOR<ClientUpdateWithoutMattersInput, ClientUncheckedUpdateWithoutMattersInput>
+  }
+
+  export type ClientUpdateWithoutMattersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cases?: CaseUpdateManyWithoutClientNestedInput
+    caseDetails?: CaseDetailsUpdateOneWithoutClientNestedInput
+    billing?: BillingUpdateOneWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateWithoutMattersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cases?: CaseUncheckedUpdateManyWithoutClientNestedInput
+    caseDetails?: CaseDetailsUncheckedUpdateOneWithoutClientNestedInput
+    billing?: BillingUncheckedUpdateOneWithoutClientNestedInput
+  }
+
   export type ClientCreateWithoutCasesInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
     createdAt?: Date | string
     updatedAt?: Date | string
     caseDetails?: CaseDetailsCreateNestedOneWithoutClientInput
+    matters?: MatterCreateNestedManyWithoutClientInput
     billing?: BillingCreateNestedOneWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutCasesInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
     createdAt?: Date | string
     updatedAt?: Date | string
     caseDetails?: CaseDetailsUncheckedCreateNestedOneWithoutClientInput
+    matters?: MatterUncheckedCreateNestedManyWithoutClientInput
     billing?: BillingUncheckedCreateNestedOneWithoutClientInput
   }
 
@@ -14526,48 +16362,64 @@ export namespace Prisma {
   export type ClientUpdateWithoutCasesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     caseDetails?: CaseDetailsUpdateOneWithoutClientNestedInput
+    matters?: MatterUpdateManyWithoutClientNestedInput
     billing?: BillingUpdateOneWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutCasesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     caseDetails?: CaseDetailsUncheckedUpdateOneWithoutClientNestedInput
+    matters?: MatterUncheckedUpdateManyWithoutClientNestedInput
     billing?: BillingUncheckedUpdateOneWithoutClientNestedInput
   }
 
   export type ClientCreateWithoutCaseDetailsInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseCreateNestedManyWithoutClientInput
+    matters?: MatterCreateNestedManyWithoutClientInput
     billing?: BillingCreateNestedOneWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutCaseDetailsInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseUncheckedCreateNestedManyWithoutClientInput
+    matters?: MatterUncheckedCreateNestedManyWithoutClientInput
     billing?: BillingUncheckedCreateNestedOneWithoutClientInput
   }
 
@@ -14590,24 +16442,32 @@ export namespace Prisma {
   export type ClientUpdateWithoutCaseDetailsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUpdateManyWithoutClientNestedInput
+    matters?: MatterUpdateManyWithoutClientNestedInput
     billing?: BillingUpdateOneWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutCaseDetailsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutClientNestedInput
+    matters?: MatterUncheckedUpdateManyWithoutClientNestedInput
     billing?: BillingUncheckedUpdateOneWithoutClientNestedInput
   }
 
@@ -14743,6 +16603,9 @@ export namespace Prisma {
   export type ClientCreateWithoutBillingInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
@@ -14750,11 +16613,15 @@ export namespace Prisma {
     updatedAt?: Date | string
     cases?: CaseCreateNestedManyWithoutClientInput
     caseDetails?: CaseDetailsCreateNestedOneWithoutClientInput
+    matters?: MatterCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutBillingInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    address?: string | null
     dateOpened: Date | string
     status: string
     type: string
@@ -14762,6 +16629,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     cases?: CaseUncheckedCreateNestedManyWithoutClientInput
     caseDetails?: CaseDetailsUncheckedCreateNestedOneWithoutClientInput
+    matters?: MatterUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutBillingInput = {
@@ -14783,6 +16651,9 @@ export namespace Prisma {
   export type ClientUpdateWithoutBillingInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -14790,11 +16661,15 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUpdateManyWithoutClientNestedInput
     caseDetails?: CaseDetailsUpdateOneWithoutClientNestedInput
+    matters?: MatterUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutBillingInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -14802,6 +16677,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutClientNestedInput
     caseDetails?: CaseDetailsUncheckedUpdateOneWithoutClientNestedInput
+    matters?: MatterUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type UserCreateWithoutResetTokensInput = {
@@ -14905,6 +16781,18 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type MatterCreateManyClientInput = {
+    id?: number
+    title: string
+    dateOpened: Date | string
+    status?: string
+    type: string
+    description?: string | null
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type CaseUpdateWithoutClientInput = {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14927,6 +16815,41 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatterUpdateWithoutClientInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatterUncheckedUpdateWithoutClientInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatterUncheckedUpdateManyWithoutClientInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    dateOpened?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
