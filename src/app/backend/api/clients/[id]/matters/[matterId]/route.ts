@@ -1,5 +1,3 @@
-// File: src/app/backend/api/clients/[clientId]/matters/[matterId]/route.ts
-
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
@@ -10,16 +8,50 @@ type MatterUpdateFields = {
   description?: string;
 };
 
+// Helper to extract IDs from URL
+function extractIdsFromUrl(url: string): { clientId: string | null; matterId: string | null } {
+  const segments = url.split('/');
+  const clientIndex = segments.indexOf('clients');
+  const matterIndex = segments.indexOf('matters');
+  
+  return {
+    clientId: clientIndex !== -1 ? segments[clientIndex + 1] : null,
+    matterId: matterIndex !== -1 ? segments[matterIndex + 1] : null,
+  };
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ clientId: string; matterId: string }> }
 ) {
   try {
-    const { clientId, matterId } = await params;
+    // Try to get params from context
+    let clientId: string | null = null;
+    let matterId: string | null = null;
+    
+    try {
+      const paramsObj = await params;
+      clientId = paramsObj.clientId || null;
+      matterId = paramsObj.matterId || null;
+    } catch (error) {
+      console.error('Error getting params:', error);
+    }
+    
+    // Fallback: extract from URL if params are missing
+    if (!clientId || !matterId) {
+      const url = new URL(request.url);
+      const extracted = extractIdsFromUrl(url.pathname);
+      clientId = extracted.clientId;
+      matterId = extracted.matterId;
+    }
+
     const updateData = await request.json();
-    const matterIdNum = parseInt(matterId);
+    const matterIdNum = parseInt(matterId!);
+
+    console.log('PATCH request received:', { clientId, matterId, updateData });
 
     if (!clientId || isNaN(matterIdNum)) {
+      console.log('Invalid IDs:', { clientId, matterId });
       return NextResponse.json({ error: 'Invalid client ID or matter ID' }, { status: 400 });
     }
 
@@ -73,13 +105,33 @@ export async function PATCH(
   }
 }
 
+// Apply the same fix to DELETE method
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ clientId: string; matterId: string }> }
 ) {
   try {
-    const { clientId, matterId } = await params;
-    const matterIdNum = parseInt(matterId);
+    // Try to get params from context
+    let clientId: string | null = null;
+    let matterId: string | null = null;
+    
+    try {
+      const paramsObj = await params;
+      clientId = paramsObj.clientId || null;
+      matterId = paramsObj.matterId || null;
+    } catch (error) {
+      console.error('Error getting params:', error);
+    }
+    
+    // Fallback: extract from URL if params are missing
+    if (!clientId || !matterId) {
+      const url = new URL(request.url);
+      const extracted = extractIdsFromUrl(url.pathname);
+      clientId = extracted.clientId;
+      matterId = extracted.matterId;
+    }
+
+    const matterIdNum = parseInt(matterId!);
 
     if (!clientId || isNaN(matterIdNum)) {
       return NextResponse.json({ error: 'Invalid client ID or matter ID' }, { status: 400 });

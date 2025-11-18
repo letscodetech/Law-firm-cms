@@ -156,7 +156,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       });
 
       return NextResponse.json(
-        { message: "Failed to send verification email. Please try again." },
+        { message: "Failed to send verification email. Please login if you already has an account" },
         { status: 500 }
       );
     }

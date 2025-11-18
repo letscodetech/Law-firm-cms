@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   FolderPlus,
   Upload,
@@ -17,11 +17,11 @@ import {
   FileText,
   FileImage,
   FileSpreadsheet,
-  //   FilePdf
+  Eye,
 } from "lucide-react";
 import { FaFilePdf } from "react-icons/fa";
-
 import { toast } from "sonner";
+import Image from "next/image";
 
 // Types
 type FileItem = {
@@ -65,6 +65,13 @@ const DocumentManager = () => {
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [renameName, setRenameName] = useState("");
+  
+  // New state for file preview
+  const [previewFile, setPreviewFile] = useState<{
+    url: string;
+    name: string;
+    type: string;
+  } | null>(null);
 
   useEffect(() => {
     fetchItems(currentFolder);
@@ -98,13 +105,36 @@ const DocumentManager = () => {
       setBreadcrumbs(newBreadcrumbs);
       setCurrentFolder(item.id);
     } else {
-      // Handle file preview or download
+      // Handle file preview
       handlePreviewFile(item as FileItem);
     }
   };
 
-  const handlePreviewFile = (file: FileItem) => {
-    toast.info(`Opening ${file.name}`);
+  const handlePreviewFile = async (file: FileItem) => {
+    try {
+      toast.loading(`Opening ${file.name}...`);
+      
+      const response = await fetch(`/backend/api/documents/files/${file.id}?action=view`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+      
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      setPreviewFile({
+        url: blobUrl,
+        name: file.name,
+        type: file.mimeType
+      });
+      
+      toast.dismiss();
+    } catch (error) {
+      toast.dismiss();
+      console.error('Error opening file:', error);
+      toast.error('Failed to open file');
+    }
   };
 
   const handleBreadcrumbClick = (index: number) => {
@@ -128,16 +158,17 @@ const DocumentManager = () => {
     setShowContextMenu(true);
   };
 
-  const handleDocumentClick = () => {
+  // Memoize handleDocumentClick to fix the useEffect dependency warning
+  const handleDocumentClick = useCallback(() => {
     if (showContextMenu) {
       setShowContextMenu(false);
     }
-  };
+  }, [showContextMenu]);
 
   useEffect(() => {
     document.addEventListener("click", handleDocumentClick);
     return () => document.removeEventListener("click", handleDocumentClick);
-  }, [showContextMenu]);
+  }, [handleDocumentClick]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
@@ -229,17 +260,68 @@ const DocumentManager = () => {
     }
   };
 
-  const handleDownload = (file: FileItem) => {
-    const downloadUrl = `/backend/api/documents/files/${file.id}/download`;
+  const handleView = async (file: FileItem) => {
+    try {
+      toast.loading(`Opening ${file.name}...`);
+      
+const response = await fetch(`/backend/api/documents/files/${file.id}?action=view`);      
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+      
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      // Open the file in a new tab for viewing
+      window.open(blobUrl, '_blank');
+      
+      // Clean up the blob URL after a short delay
+      setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+      }, 100);
+      
+      toast.dismiss();
+    } catch (error) {
+      toast.dismiss();
+      console.error('Error opening file:', error);
+      toast.error('Failed to open file');
+    }
+    
+    setShowContextMenu(false);
+  };
 
-    // Create a temporary anchor element to trigger download
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
+  const handleDownload = async (file: FileItem) => {
+    try {
+      toast.loading(`Downloading ${file.name}...`);
+      
+      const response = await fetch(`/backend/api/documents/files/${file.id}?action=download`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+      
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      // Create a temporary anchor element to trigger download
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      // Clean up the blob URL
+      URL.revokeObjectURL(blobUrl);
+      
+      toast.dismiss();
+      toast.success(`${file.name} downloaded successfully`);
+    } catch (error) {
+      toast.dismiss();
+      console.error('Error downloading file:', error);
+      toast.error('Failed to download file');
+    }
+    
     setShowContextMenu(false);
   };
 
@@ -319,6 +401,14 @@ const DocumentManager = () => {
       month: "short",
       day: "numeric",
     });
+  };
+
+  // Close preview modal and clean up
+  const closePreview = () => {
+    if (previewFile) {
+      URL.revokeObjectURL(previewFile.url);
+      setPreviewFile(null);
+    }
   };
 
   return (
@@ -606,15 +696,26 @@ const DocumentManager = () => {
         >
           <ul className="py-1">
             {selectedItem.type === "file" && (
-              <li>
-                <button
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                  onClick={() => handleDownload(selectedItem as FileItem)}
-                >
-                  <Download size={16} className="mr-2" />
-                  Download
-                </button>
-              </li>
+              <>
+                <li>
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                    onClick={() => handleView(selectedItem as FileItem)}
+                  >
+                    <Eye size={16} className="mr-2" />
+                    View
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                    onClick={() => handleDownload(selectedItem as FileItem)}
+                  >
+                    <Download size={16} className="mr-2" />
+                    Download
+                  </button>
+                </li>
+              </>
             )}
             <li>
               <button
@@ -697,6 +798,66 @@ const DocumentManager = () => {
               >
                 Rename
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* File Preview Modal */}
+      {previewFile && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-4/5 flex flex-col">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h3 className="text-lg font-semibold truncate">{previewFile.name}</h3>
+              <button 
+                onClick={closePreview}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-2">
+              {previewFile.type.startsWith('image/') ? (
+                <div className="flex justify-center items-center h-full">
+                  <Image 
+                    src={previewFile.url} 
+                    alt={previewFile.name} 
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="max-w-full max-h-full object-contain"
+                    unoptimized
+                  />
+                </div>
+              ) : previewFile.type === 'application/pdf' ? (
+                <iframe 
+                  src={previewFile.url} 
+                  className="w-full h-full"
+                  title={previewFile.name}
+                />
+              ) : previewFile.type.startsWith('text/') ? (
+                <pre className="bg-gray-100 p-4 rounded overflow-auto h-full">
+                  <code id="text-content"></code>
+                </pre>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <File size={64} className="text-gray-400 mb-4" />
+                  <p className="text-gray-500">Preview not available for this file type</p>
+                  <button 
+                    onClick={() => {
+                      const a = document.createElement('a');
+                      a.href = previewFile.url;
+                      a.download = previewFile.name;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                    }}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Download File
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
