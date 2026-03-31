@@ -1,8 +1,6 @@
-// app/backend/api/documents/upload/route.ts
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { put } from '@vercel/blob';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(request: Request) {
@@ -16,23 +14,13 @@ export async function POST(request: Request) {
     }
 
     const fileId = uuidv4();
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
 
-    // 1. Use the project root's "uploads" folder (PERMANENT storage)
-    const uploadDir = path.join(process.cwd(), 'uploads');
+    // Upload to Vercel Blob (works in production)
+    const blob = await put(`documents/${fileId}`, file, {
+      access: 'public',
+    });
 
-    // 2. Create the folder if it doesn't exist
-    await mkdir(uploadDir, { recursive: true });
-
-    // 3. Save the physical file to the hard drive
-    const filePath = path.join(uploadDir, fileId);
-    await writeFile(filePath, buffer);
-
-    // 4. Save the RELATIVE path to the database 
-    // (e.g., "uploads/12345-abcde" instead of "/tmp/uploads/12345-abcde")
-    const dbPath = `uploads/${fileId}`;
-
+    // Save the blob URL to the database instead of a local path
     const document = await db.document.create({
       data: {
         id: fileId,
@@ -41,7 +29,7 @@ export async function POST(request: Request) {
         mimeType: file.type,
         size: file.size,
         parentId: parentId === 'root' ? null : parentId,
-        path: dbPath, 
+        path: blob.url, // store the cloud URL
       },
     });
 
