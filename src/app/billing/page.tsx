@@ -206,11 +206,11 @@ export default function ClientBillingPage() {
 
   const COLORS = ["#4ade80", "#ef4444"]; // Green for paid, Red for remaining
 
-  // Format currency function
+  // Format currency function for KSH (Kenyan Shilling)
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-KE", {
       style: "currency",
-      currency: "USD",
+      currency: "KES", // Official ISO currency code for Kenyan Shillings
     }).format(amount);
   };
 

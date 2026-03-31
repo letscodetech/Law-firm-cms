@@ -5,9 +5,8 @@ import { toast } from "sonner";
 import ClientCaseDetails from "./ClientDetails";
 import React from "react";
 import DocumentManager from "./DocumentManager";
-import { usePathname } from 'next/navigation'; // or 'next/router' for older versions
-import { Search } from 'lucide-react'; // or your preferred icon library
-
+import { usePathname } from 'next/navigation';
+import { Search } from 'lucide-react';
 
 const statusOptions = ["Open", "Closed", "Pending"];
 const typeOptions = [
@@ -95,9 +94,9 @@ type Client = {
   email?: string;
   phone?: string;
   address?: string;
-  dateOpened: string; // For backward compatibility
-  status: string; // For backward compatibility  
-  type: string; // For backward compatibility
+  dateOpened: string; 
+  status: string;  
+  type: string; 
   matters?: Matter[];
 };
 
@@ -117,14 +116,61 @@ const ClientTable = ({ limit }: { limit?: number }) => {
   const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
   // Track which specific matters have their details expanded
   const [expandedMatterDetails, setExpandedMatterDetails] = useState<Set<string>>(new Set());
+  
+  // Add to your state management
+  const [expandedDocuments, setExpandedDocuments] = useState(new Set<string>());
 
   const fetchClients = async () => {
     try {
       setLoading(true);
       const res = await fetch("/backend/api/clients");
       const text = await res.text();
-      const data: Client[] = text ? JSON.parse(text) : [];
-  
+      
+      // Handle empty response
+      if (!text) {
+        setClients([]);
+        return;
+      }
+      
+      // Safely parse JSON
+      let parsedData;
+      try {
+        parsedData = JSON.parse(text);
+      } catch (parseError) {
+        console.error("Failed to parse JSON response:", parseError);
+        toast.error("Invalid response from server");
+        setClients([]);
+        return;
+      }
+      
+      // Handle different response formats
+      let data: Client[];
+      
+      if (Array.isArray(parsedData)) {
+        // Direct array response: [...]
+        data = parsedData;
+      } else if (parsedData && typeof parsedData === 'object') {
+        // Wrapped response: { data: [...] }, { clients: [...] }, etc.
+        data = parsedData.data 
+            || parsedData.clients 
+            || parsedData.results 
+            || parsedData.items
+            || parsedData.matters
+            || [];
+        
+        if (!Array.isArray(data)) {
+          console.error("Expected array but got:", typeof data, data);
+          toast.error("Unexpected response format from server");
+          setClients([]);
+          return;
+        }
+      } else {
+        console.error("Unexpected response type:", typeof parsedData, parsedData);
+        toast.error("Unexpected response from server");
+        setClients([]);
+        return;
+      }
+
       const processedData: Client[] = data.map((client) => {
         if (client.matters && Array.isArray(client.matters)) {
           const processedMatters: Matter[] = client.matters.map((matter) => ({
@@ -199,7 +245,8 @@ const ClientTable = ({ limit }: { limit?: number }) => {
 
   const handleStatusChange = async (clientId: number, matterId: number, newStatus: string) => {
     try {
-      const res = await fetch(`backend/api/clients/${clientId}/matters/${matterId}`, {
+      // FIXED: Added missing leading slash
+      const res = await fetch(`/backend/api/clients/${clientId}/matters/${matterId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -216,7 +263,6 @@ const ClientTable = ({ limit }: { limit?: number }) => {
               return {
                 ...client,
                 matters: updatedMatters,
-                // Update main status if this is the first matter (for backward compatibility)
                 status: updatedMatters[0]?.status || client.status
               };
             }
@@ -252,7 +298,6 @@ const ClientTable = ({ limit }: { limit?: number }) => {
               return {
                 ...client,
                 matters: updatedMatters,
-                // Update main type if this is the first matter (for backward compatibility)
                 type: updatedMatters[0]?.type || client.type
               };
             }
@@ -292,6 +337,25 @@ const ClientTable = ({ limit }: { limit?: number }) => {
 
   const isMatterDetailsExpanded = (clientId: number, matterId: number) => {
     return expandedMatterDetails.has(`${clientId}-${matterId}`);
+  };
+
+  // Toggle function
+  const toggleDocuments = (clientId: number, matterId: number) => {
+    const key = `${clientId}-${matterId}`;
+    setExpandedDocuments(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
+  };
+
+  // Check function
+  const isDocumentsExpanded = (clientId: number, matterId: number) => {
+    return expandedDocuments.has(`${clientId}-${matterId}`);
   };
 
   const getStatusColor = (status: string) => {
@@ -334,52 +398,28 @@ const ClientTable = ({ limit }: { limit?: number }) => {
     }
   };
   
-// Add to your state management
-const [expandedDocuments, setExpandedDocuments] = useState(new Set());
+  // Sort clients
+  const sortedClients = useMemo(() => {
+    return [...clients].sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
 
-// Toggle function
-const toggleDocuments = (clientId: number, matterId: number) => {
-  const key = `${clientId}-${matterId}`;
-  setExpandedDocuments(prev => {
-    const newSet = new Set(prev);
-    if (newSet.has(key)) {
-      newSet.delete(key);
-    } else {
-      newSet.add(key);
-    }
-    return newSet;
-  });
-};
+      if (aValue === undefined) return 1;
+      if (bValue === undefined) return -1;
 
-// Check function
-const isDocumentsExpanded = (clientId: number, matterId: number) => {
-  return expandedDocuments.has(`${clientId}-${matterId}`);
-};
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortDirection === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
 
- // Sort clients
- const sortedClients = useMemo(() => {
-  return [...clients].sort((a, b) => {
-    const aValue = a[sortField];
-    const bValue = b[sortField];
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+      }
 
-    // Handle undefined values
-    if (aValue === undefined) return 1;
-    if (bValue === undefined) return -1;
-
-    // Only sort strings or numbers
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return sortDirection === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
-    }
-
-    return 0; // Don't sort for other types (e.g., arrays)
-  });
-}, [clients, sortField, sortDirection]);
+      return 0; 
+    });
+  }, [clients, sortField, sortDirection]);
 
   // Filter clients based on search term
   const filteredClients = useMemo(() => {
@@ -395,7 +435,6 @@ const isDocumentsExpanded = (clientId: number, matterId: number) => {
     );
   }, [sortedClients, searchTerm]);
 
-
   const displayClients = useMemo(() => {
     return limit ? filteredClients.slice(0, limit) : filteredClients;
   }, [filteredClients, limit]);
@@ -410,17 +449,13 @@ const isDocumentsExpanded = (clientId: number, matterId: number) => {
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
           <p className="text-gray-600 text-sm">Loading clients...</p>
         </div>
-          
       </div>
-      
     );
   }
-
   
   if (displayClients.length === 0 && !loading) {
     return (
       <div className="space-y-4">
-        {/* Search Bar - Only visible on /client endpoint */}
         {isClientPage && (
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -471,25 +506,23 @@ const isDocumentsExpanded = (clientId: number, matterId: number) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-      {/* Search Bar - Only visible on /client endpoint */}
-{isClientPage && (
-  <div className="relative">
-    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-    <input
-      type="text"
-      placeholder="Search clients, emails, or matters..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-        
-          console.log('Search triggered:', searchTerm);
-        }
-      }}
-      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-    />
-  </div>
-)}
+        {isClientPage && (
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <input
+              type="text"
+              placeholder="Search clients, emails, or matters..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  console.log('Search triggered:', searchTerm);
+                }
+              }}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        )}
         <h2 className="text-lg font-semibold text-gray-800 mt-5">Client Cases</h2>
         <p className="text-sm text-gray-600 mt-1">
           {limit ? (
@@ -669,16 +702,6 @@ const isDocumentsExpanded = (clientId: number, matterId: number) => {
                             </div>
                           </div>
                           
-      {/* Show limit indicator when applicable */}
-      {limit && clients.length > limit && (
-        <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-center">
-          <p className="text-sm text-gray-600">
-            Showing {displayClients.length} of {clients.length} clients
-          </p>
-        </div>
-      )}
- 
-  
                           {/* Matters List */}
                           <div className="bg-white rounded-lg p-4 border border-gray-200">
                             <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
@@ -722,7 +745,8 @@ const isDocumentsExpanded = (clientId: number, matterId: number) => {
                                           </select>
                                         </div>
                                         <div>
-                                          <label className="text-xs font-medium text-gray-600 mr-5Your Clients">Case Type</label>
+                                          {/* FIXED TYPO: Removed "Your Clients" from class name */}
+                                          <label className="text-xs font-medium text-gray-600 mr-5">Case Type</label>
                                           <select
                                             value={matter.type}
                                             onChange={(e) => {
@@ -860,9 +884,17 @@ const isDocumentsExpanded = (clientId: number, matterId: number) => {
           </tbody>
         </table>
       </div>
+      
+      {/* Show limit indicator when applicable */}
+      {limit && clients.length > limit && (
+        <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-center">
+          <p className="text-sm text-gray-600">
+            Showing {displayClients.length} of {clients.length} clients
+          </p>
+        </div>
+      )}
     </div>
   );
 };
-   
 
 export default ClientTable;

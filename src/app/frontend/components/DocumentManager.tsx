@@ -100,12 +100,10 @@ const DocumentManager = () => {
 
   const handleItemClick = (item: Item) => {
     if (item.type === "folder") {
-      // Update breadcrumbs
       const newBreadcrumbs = [...breadcrumbs, { id: item.id, name: item.name }];
       setBreadcrumbs(newBreadcrumbs);
       setCurrentFolder(item.id);
     } else {
-      // Handle file preview
       handlePreviewFile(item as FileItem);
     }
   };
@@ -117,7 +115,9 @@ const DocumentManager = () => {
       const response = await fetch(`/backend/api/documents/files/${file.id}?action=view`);
       
       if (!response.ok) {
-        throw new Error('Failed to fetch file');
+        // IMPROVED: Extract the actual error message from the backend
+        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch file' }));
+        throw new Error(errorData.error || 'Failed to fetch file');
       }
       
       const blob = await response.blob();
@@ -133,7 +133,8 @@ const DocumentManager = () => {
     } catch (error) {
       toast.dismiss();
       console.error('Error opening file:', error);
-      toast.error('Failed to open file');
+      // IMPROVED: Show the specific backend error to the user
+      toast.error(error instanceof Error ? error.message : 'Failed to open file');
     }
   };
 
@@ -158,7 +159,6 @@ const DocumentManager = () => {
     setShowContextMenu(true);
   };
 
-  // Memoize handleDocumentClick to fix the useEffect dependency warning
   const handleDocumentClick = useCallback(() => {
     if (showContextMenu) {
       setShowContextMenu(false);
@@ -199,7 +199,6 @@ const DocumentManager = () => {
       console.error("Upload error:", error);
     }
 
-    // Clear the input
     e.target.value = "";
   };
 
@@ -264,18 +263,18 @@ const DocumentManager = () => {
     try {
       toast.loading(`Opening ${file.name}...`);
       
-const response = await fetch(`/backend/api/documents/files/${file.id}?action=view`);      
+      const response = await fetch(`/backend/api/documents/files/${file.id}?action=view`);      
       if (!response.ok) {
-        throw new Error('Failed to fetch file');
+        // IMPROVED: Extract the actual error message from the backend
+        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch file' }));
+        throw new Error(errorData.error || 'Failed to fetch file');
       }
       
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       
-      // Open the file in a new tab for viewing
       window.open(blobUrl, '_blank');
       
-      // Clean up the blob URL after a short delay
       setTimeout(() => {
         URL.revokeObjectURL(blobUrl);
       }, 100);
@@ -284,7 +283,8 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
     } catch (error) {
       toast.dismiss();
       console.error('Error opening file:', error);
-      toast.error('Failed to open file');
+      // IMPROVED: Show the specific backend error to the user
+      toast.error(error instanceof Error ? error.message : 'Failed to open file');
     }
     
     setShowContextMenu(false);
@@ -297,13 +297,14 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
       const response = await fetch(`/backend/api/documents/files/${file.id}?action=download`);
       
       if (!response.ok) {
-        throw new Error('Failed to fetch file');
+        // IMPROVED: Extract the actual error message from the backend
+        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch file' }));
+        throw new Error(errorData.error || 'Failed to fetch file');
       }
       
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       
-      // Create a temporary anchor element to trigger download
       const a = document.createElement("a");
       a.href = blobUrl;
       a.download = file.name;
@@ -311,7 +312,6 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
       a.click();
       document.body.removeChild(a);
       
-      // Clean up the blob URL
       URL.revokeObjectURL(blobUrl);
       
       toast.dismiss();
@@ -319,7 +319,8 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
     } catch (error) {
       toast.dismiss();
       console.error('Error downloading file:', error);
-      toast.error('Failed to download file');
+      // IMPROVED: Show the specific backend error to the user
+      toast.error(error instanceof Error ? error.message : 'Failed to download file');
     }
     
     setShowContextMenu(false);
@@ -363,7 +364,6 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
     }
   };
 
-  // Render file icon based on MIME type
   const renderFileIcon = (mimeType: string) => {
     if (mimeType.startsWith("image/")) {
       return <FileImage size={40} className="text-purple-500" />;
@@ -386,14 +386,12 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
     }
   };
 
-  // Format file size
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -403,7 +401,6 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
     });
   };
 
-  // Close preview modal and clean up
   const closePreview = () => {
     if (previewFile) {
       URL.revokeObjectURL(previewFile.url);
@@ -534,15 +531,11 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
           </div>
         ) : (
           <>
-            {/* Display folders first, then files */}
             {view === "grid" ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {filteredItems
                   .sort((a, b) => {
-                    // Sort folders first, then sort by name
-                    if (a.type !== b.type) {
-                      return a.type === "folder" ? -1 : 1;
-                    }
+                    if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
                     return a.name.localeCompare(b.name);
                   })
                   .map((item) => (
@@ -579,45 +572,17 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Name
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Type
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Size
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Modified
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Actions
-                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modified</th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {filteredItems
                       .sort((a, b) => {
-                        // Sort folders first, then sort by name
-                        if (a.type !== b.type) {
-                          return a.type === "folder" ? -1 : 1;
-                        }
+                        if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
                         return a.name.localeCompare(b.name);
                       })
                       .map((item) => (
@@ -626,39 +591,21 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
                           className="hover:bg-gray-50 transition-colors cursor-pointer"
                           onContextMenu={(e) => handleContextMenu(e, item)}
                         >
-                          <td
-                            className="px-4 py-3 flex items-center"
-                            onClick={() => handleItemClick(item)}
-                          >
+                          <td className="px-4 py-3 flex items-center" onClick={() => handleItemClick(item)}>
                             {item.type === "folder" ? (
-                              <Folder
-                                size={20}
-                                className="text-blue-500 mr-3"
-                              />
+                              <Folder size={20} className="text-blue-500 mr-3" />
                             ) : (
-                              <div className="mr-3">
-                                {renderFileIcon((item as FileItem).mimeType)}
-                              </div>
+                              <div className="mr-3">{renderFileIcon((item as FileItem).mimeType)}</div>
                             )}
-                            <div className="font-medium text-gray-900">
-                              {item.name}
-                            </div>
+                            <div className="font-medium text-gray-900">{item.name}</div>
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-500">
-                            {item.type === "folder"
-                              ? "Folder"
-                              : (item as FileItem).mimeType
-                                  .split("/")[1]
-                                  .toUpperCase()}
+                            {item.type === "folder" ? "Folder" : (item as FileItem).mimeType.split("/")[1]?.toUpperCase()}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-500">
-                            {item.type === "file"
-                              ? formatFileSize((item as FileItem).size)
-                              : "-"}
+                            {item.type === "file" ? formatFileSize((item as FileItem).size) : "-"}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-500">
-                            {formatDate(item.updatedAt)}
-                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-500">{formatDate(item.updatedAt)}</td>
                           <td className="px-4 py-3 text-sm text-gray-500">
                             <button
                               className="text-gray-500 hover:text-gray-700"
@@ -687,52 +634,32 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
           style={{
             top: contextMenuPosition.y,
             left: contextMenuPosition.x,
-            transform: `translate(${
-              contextMenuPosition.x + 192 > window.innerWidth ? "-100%" : "0"
-            }, ${
-              contextMenuPosition.y + 160 > window.innerHeight ? "-100%" : "0"
-            })`,
+            transform: `translate(${contextMenuPosition.x + 192 > window.innerWidth ? "-100%" : "0"}, ${contextMenuPosition.y + 160 > window.innerHeight ? "-100%" : "0"})`,
           }}
         >
           <ul className="py-1">
             {selectedItem.type === "file" && (
               <>
                 <li>
-                  <button
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                    onClick={() => handleView(selectedItem as FileItem)}
-                  >
-                    <Eye size={16} className="mr-2" />
-                    View
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center" onClick={() => handleView(selectedItem as FileItem)}>
+                    <Eye size={16} className="mr-2" /> View
                   </button>
                 </li>
                 <li>
-                  <button
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                    onClick={() => handleDownload(selectedItem as FileItem)}
-                  >
-                    <Download size={16} className="mr-2" />
-                    Download
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center" onClick={() => handleDownload(selectedItem as FileItem)}>
+                    <Download size={16} className="mr-2" /> Download
                   </button>
                 </li>
               </>
             )}
             <li>
-              <button
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                onClick={handleRename}
-              >
-                <Edit size={16} className="mr-2" />
-                Rename
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center" onClick={handleRename}>
+                <Edit size={16} className="mr-2" /> Rename
               </button>
             </li>
             <li>
-              <button
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
-                onClick={handleDelete}
-              >
-                <Trash2 size={16} className="mr-2" />
-                Delete
+              <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center" onClick={handleDelete}>
+                <Trash2 size={16} className="mr-2" /> Delete
               </button>
             </li>
           </ul>
@@ -753,18 +680,8 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
               autoFocus
             />
             <div className="mt-4 flex justify-end space-x-3">
-              <button
-                onClick={() => setShowCreateFolderModal(false)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateFolder}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Create
-              </button>
+              <button onClick={() => setShowCreateFolderModal(false)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100">Cancel</button>
+              <button onClick={handleCreateFolder} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Create</button>
             </div>
           </div>
         </div>
@@ -774,9 +691,7 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
       {showRenameModal && selectedItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">
-              Rename {selectedItem.type === "folder" ? "Folder" : "File"}
-            </h3>
+            <h3 className="text-lg font-semibold mb-4">Rename {selectedItem.type === "folder" ? "Folder" : "File"}</h3>
             <input
               type="text"
               value={renameName}
@@ -786,18 +701,8 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
               autoFocus
             />
             <div className="mt-4 flex justify-end space-x-3">
-              <button
-                onClick={() => setShowRenameModal(false)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitRename}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Rename
-              </button>
+              <button onClick={() => setShowRenameModal(false)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100">Cancel</button>
+              <button onClick={submitRename} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Rename</button>
             </div>
           </div>
         </div>
@@ -809,32 +714,17 @@ const response = await fetch(`/backend/api/documents/files/${file.id}?action=vie
           <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-4/5 flex flex-col">
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="text-lg font-semibold truncate">{previewFile.name}</h3>
-              <button 
-                onClick={closePreview}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={closePreview} className="text-gray-500 hover:text-gray-700">
                 <X size={20} />
               </button>
             </div>
             <div className="flex-1 overflow-auto p-2">
               {previewFile.type.startsWith('image/') ? (
                 <div className="flex justify-center items-center h-full">
-                  <Image 
-                    src={previewFile.url} 
-                    alt={previewFile.name} 
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="max-w-full max-h-full object-contain"
-                    unoptimized
-                  />
+                  <Image src={previewFile.url} alt={previewFile.name} width={0} height={0} sizes="100vw" className="max-w-full max-h-full object-contain" unoptimized />
                 </div>
               ) : previewFile.type === 'application/pdf' ? (
-                <iframe 
-                  src={previewFile.url} 
-                  className="w-full h-full"
-                  title={previewFile.name}
-                />
+                <iframe src={previewFile.url} className="w-full h-full" title={previewFile.name} />
               ) : previewFile.type.startsWith('text/') ? (
                 <pre className="bg-gray-100 p-4 rounded overflow-auto h-full">
                   <code id="text-content"></code>
