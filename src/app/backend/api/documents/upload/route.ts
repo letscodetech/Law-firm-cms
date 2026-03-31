@@ -13,14 +13,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
+    if (!token) {
+      return NextResponse.json({ error: 'Blob storage not configured' }, { status: 500 });
+    }
+
     const fileId = uuidv4();
 
-    // Upload to Vercel Blob (works in production)
+    // Pass token explicitly
     const blob = await put(`documents/${fileId}`, file, {
       access: 'public',
+      token, // <-- explicitly pass it
     });
 
-    // Save the blob URL to the database instead of a local path
     const document = await db.document.create({
       data: {
         id: fileId,
@@ -29,13 +34,15 @@ export async function POST(request: Request) {
         mimeType: file.type,
         size: file.size,
         parentId: parentId === 'root' ? null : parentId,
-        path: blob.url, // store the cloud URL
+        path: blob.url,
       },
     });
 
     return NextResponse.json(document, { status: 201 });
   } catch (error) {
-    console.error('Error uploading file:', error);
-    return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
+    console.error('Error uploading file:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    return NextResponse.json({
+      error: error instanceof Error ? error.message : 'Failed to upload file'
+    }, { status: 500 });
   }
 }
