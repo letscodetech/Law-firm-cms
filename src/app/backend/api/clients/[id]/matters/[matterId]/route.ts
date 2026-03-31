@@ -22,16 +22,15 @@ function extractIdsFromUrl(url: string): { clientId: string | null; matterId: st
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ clientId: string; matterId: string }> }
+  { params }: { params: Promise<{ id: string; matterId: string }> }
 ) {
   try {
-    // Try to get params from context
     let clientId: string | null = null;
     let matterId: string | null = null;
     
     try {
       const paramsObj = await params;
-      clientId = paramsObj.clientId || null;
+      clientId = paramsObj.id || null;        // changed from paramsObj.clientId
       matterId = paramsObj.matterId || null;
     } catch (error) {
       console.error('Error getting params:', error);
@@ -105,19 +104,17 @@ export async function PATCH(
   }
 }
 
-// Apply the same fix to DELETE method
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ clientId: string; matterId: string }> }
+  { params }: { params: Promise<{ id: string; matterId: string }> }
 ) {
   try {
-    // Try to get params from context
     let clientId: string | null = null;
     let matterId: string | null = null;
     
     try {
       const paramsObj = await params;
-      clientId = paramsObj.clientId || null;
+      clientId = paramsObj.id || null;        // changed from paramsObj.clientId
       matterId = paramsObj.matterId || null;
     } catch (error) {
       console.error('Error getting params:', error);
