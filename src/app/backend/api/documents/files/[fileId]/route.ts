@@ -1,10 +1,7 @@
-// app/backend/api/documents/files/[fileId]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { readFile, stat, unlink } from 'fs/promises';
-import { join, basename } from 'path';
+import { del } from '@vercel/blob';
 
-// GET: Download or View the file
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ fileId: string }> }
@@ -23,51 +20,17 @@ export async function GET(
     });
 
     if (!file || !file.path) {
-      return NextResponse.json({ error: 'File record or path not found' }, { status: 404 });
+      return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 
-    const storedPath = file.path;
-    const filename = basename(storedPath); 
+    // file.path is now a blob URL e.g. https://xxx.blob.vercel-storage.com/...
+    const blobResponse = await fetch(file.path);
 
-    // DEBUG LOGGING: Print exactly what the DB gave us
-    console.log('=== DEBUG FILE FETCH ===');
-    console.log('File ID:', fileId);
-    console.log('File Name:', file.name);
-    console.log('DB Stored Path:', storedPath);
-    console.log('Extracted Filename:', filename);
-    console.log('Project Root (cwd):', process.cwd());
-
-    const possiblePaths = [
-      join(process.cwd(), 'uploads', filename),
-      join(process.cwd(), 'uploads', storedPath),
-      join(process.cwd(), storedPath),
-      storedPath, 
-    ];
-    
-    console.log('Checking paths...');
-    
-    let filePath: string | null = null;
-    for (const p of possiblePaths) {
-      console.log(`-> Checking: ${p}`);
-      try {
-        await stat(p);
-        filePath = p;
-        console.log(`✅ SUCCESS! Found file at: ${p}`);
-        break;
-      } catch {
-        console.log(`   ❌ Not found here.`);
-        continue;
-      }
-    }
-    
-    if (!filePath) {
-      console.error('🚨 FILE NOT FOUND ANYWHERE ON DISK');
-      return NextResponse.json({ 
-        error: 'File not found on disk. It may have been deleted or the upload failed.' 
-      }, { status: 404 });
+    if (!blobResponse.ok) {
+      return NextResponse.json({ error: 'Failed to fetch file from storage' }, { status: 404 });
     }
 
-    const fileBuffer = await readFile(filePath);
+    const fileBuffer = await blobResponse.arrayBuffer();
 
     const headers = new Headers();
     headers.set('Content-Type', file.mimeType || 'application/octet-stream');
@@ -83,7 +46,30 @@ export async function GET(
   }
 }
 
-// DELETE: Remove the file from DB and disk
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ fileId: string }> }
+) {
+  try {
+    const { fileId } = await params;
+    const { name } = await request.json();
+
+    if (!fileId || !name?.trim()) {
+      return NextResponse.json({ error: 'Missing file ID or name' }, { status: 400 });
+    }
+
+    const updated = await db.document.update({
+      where: { id: fileId },
+      data: { name },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error('Error renaming file:', error);
+    return NextResponse.json({ error: 'Failed to rename file' }, { status: 500 });
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ fileId: string }> }
@@ -100,26 +86,12 @@ export async function DELETE(
     });
 
     if (!file) {
-      return NextResponse.json({ error: 'File not found in database' }, { status: 404 });
+      return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 
+    // Delete from Vercel Blob using the stored URL
     if (file.path) {
-      const filename = basename(file.path);
-      const possiblePaths = [
-        join(process.cwd(), 'uploads', filename),
-        join(process.cwd(), 'uploads', file.path),
-        join(process.cwd(), file.path),
-        file.path, 
-      ];
-
-      for (const p of possiblePaths) {
-        try {
-          await unlink(p);
-          break;
-        } catch {
-          continue;
-        }
-      }
+      await del(file.path);
     }
 
     await db.document.delete({
